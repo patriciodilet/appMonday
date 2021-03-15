@@ -19,7 +19,13 @@ class Timetrack
 	private $_itemName;
 	private $_duration;
 	private $_date;
-     
+	private $_milestone;
+	private $_postText;
+	private $_responseText;
+	private $_lastResponseId;
+	private $_creatorIdResponse;
+	private $_creatorIdPost;
+    private $_nameBoard;
 
     public function setTimeTrackID($timetrackID) {
         $this->_timetrackID = $timetrackID;
@@ -53,6 +59,34 @@ class Timetrack
 		$this->_duration = $duration;
 	}
     
+	public function setMilestone($milestone){
+		$this->_milestone = $milestone;
+	}
+
+	public function setPostText($postText) {
+        $this->_postText = $postText;
+    }
+
+	public function setResponseText($responseText) {
+        $this->_responseText = $responseText;
+    }
+
+	public function setLastResponseId($lastResponseId) {
+        $this->_lastResponseId = $lastResponseId;
+    }
+
+	public function setCreatorIdResponse($creatorIdResponse) {
+        $this->_creatorIdResponse = $creatorIdResponse;
+    }
+
+	public function setCreatorIdPost($creatorIdPost) {
+        $this->_creatorIdPost = $creatorIdPost;
+    }
+
+	public function setNameBoard($nameBoard) {
+        $this->_nameBoard = $nameBoard;
+    }
+	
 	public function setDate(){
 		$this->_date = date("d-m-Y");
 	}
@@ -65,7 +99,8 @@ class Timetrack
     // create Timetrack
     public function createTimetrack() {
 		try {
-    		$sql = 'INSERT INTO TimeTracking (boardId, itemId, userId, userEmail, TPP, itemName, duration, date)  VALUES (:boardId, :itemId, :userId, :userEmail, :TPP, :itemName, :duration, :date)';
+    		$sql = 'INSERT INTO MondayGestionDiaria (boardId, itemId, userId, userEmail, TPP, itemName, duration, milestone, date, postText, responseText, lastResponseId, creatorIdResponse, creatorIdPost, nameBoard)  VALUES (:boardId, :itemId, :userId, :userEmail, :TPP, :itemName, :duration, :milestone, :date, :postText, :responseText, :lastResponseId, :creatorIdResponse, :creatorIdPost, :nameBoard)';
+    		// $sql = 'INSERT INTO MondayGestionDiaria (boardId, itemId, userId, userEmail, TPP, itemName, duration, milestone, date)  VALUES (:boardId, :itemId, :userId, :userEmail, :TPP, :itemName, :duration, :milestone, :date)';
     		$data = [
 			    'boardId' => $this->_boardId,
 			    'itemId' => $this->_itemId,
@@ -74,7 +109,14 @@ class Timetrack
 			    'TPP' => $this->_TPP,
 			    'itemName' => $this->_itemName,
 			    'duration' => $this->_duration,
-			    'date' => $this->_date
+				'milestone' => $this->_milestone,
+			    'date' => $this->_date,
+			    'postText' => $this->_postText,
+			    'responseText' => $this->_responseText,
+			    'lastResponseId' => $this->_lastResponseId,
+			    'creatorIdResponse' => $this->_creatorIdResponse,
+			    'creatorIdPost' => $this->_creatorIdPost,
+			    'nameBoard' => $this->_nameBoard 
 			];
 	    	$stmt = $this->db->prepare($sql);
 	    	$stmt->execute($data);

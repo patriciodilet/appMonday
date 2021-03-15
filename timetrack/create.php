@@ -1,9 +1,5 @@
 <?php
-//GRAPHQL ACCESS
-$token = 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjEwMTY4OTU4MSwidWlkIjoyMDY0NzE3NSwiaWFkIjoiMjAyMS0wMy0wM1QxNToxMDoyMy41NDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6NzI5MzkzOSwicmduIjoidXNlMSJ9._dUd7R_8tLFW7Cg6sL6MFBX7xUuFGlM78XbukwI3V0c';
-$apiUrl = 'https://api.monday.com/v2';
-$headers = ['Content-Type: application/json', 'Authorization: ' . $token];
-//
+
 
 $requestMethod = $_SERVER["REQUEST_METHOD"];
 include('../class/Timetrack.php');
@@ -21,38 +17,68 @@ switch($requestMethod) {
 	    $itemId = getValuesByKey('itemId', $oArray);
 	    $userId = getValuesByKey('userId', $oArray);
 	    $colAId = getValuesByKey('texto', $oArray);
+	    $colTpp = getValuesByKey('columnId', $oArray);
 	    $colBId = getValuesByKey('columnId', $oArray);
+	    $colCId = getValuesByKey('cronogramaId', $oArray);
 
-		$query = '{ users(ids: ' . reset($userId) . ') {id name email} boards(ids: '. reset($boardId) . ') { items (ids: '. reset($itemId) .') { itemName: name column_values (ids: ["'. reset($colAId) .'", "'. reset($colBId) .'"]) { timeTrackingValues: value }}}}';
-		 
-		$data = @file_get_contents($apiUrl, false, stream_context_create([
-			'http' => [
-			 'method' => 'POST',
-			 'header' => $headers,
-			 'content' => json_encode(['query' => $query]),
-			]
-		   ]));
+		$queryUsuario = '{users(ids: ' . reset($userId) . ') {email}}';
+		$_emailUsuario = getMondayData($queryUsuario);
+		$emailUsuario = getValuesByKey('email', $_emailUsuario);
 
-		   
-		$response = json_decode($data, true);
-		$mondayData = getValuesByKey(0, $response);
-		
-		$userEmail = $mondayData[1];
-		$itemName = $mondayData[3];
-	    $timeTrackingValues = $mondayData[4];
-		$TPPcolumn = $mondayData[5];
-		$result = json_decode($timeTrackingValues, true);
+		$querytpp = '{boards(ids: '. reset($boardId) . ') {items (ids: '. reset($itemId) .') {column_values (ids: [ '. reset($colTpp) .' ])  {text}}}}';
+		$_tpp = getMondayData($querytpp); 
+		$tpp = getValuesByKey('text', $_tpp);
 
-		if($result['running'] === 'false'){
+		$queryItemName = '{boards(ids: '. reset($boardId) . ') {nameBoard: name items (ids: '. reset($itemId) .') {itemName: name}}}';
+		$_itemName = getMondayData($queryItemName); 
+		$itemName = getValuesByKey('itemName', $_itemName);
+		$nameBoard = getValuesByKey('nameBoard', $_itemName);
+
+		$queryDuration = '{items (ids: '. reset($itemId) . ') { column_values (ids: ["'. reset($colAId) . '"])  { value }}}';
+		$_duration = getMondayData($queryDuration); 
+		$objDuration = getValuesByKey('value', $_duration);
+		$duration = json_decode($objDuration, true);
+
+		$queryCronograma = '{boards(ids: '. reset($boardId) . ') { items(ids:'. reset($itemId) .') { column_values(ids: ["'. reset($colCId) . '"]) { value }}}}';
+		$_hito = getMondayData($queryCronograma); 
+		$objHito = getValuesByKey('value', $_hito);
+		$hito = json_decode($objHito, true);
+
+		$queryLastComment = '{boards(ids: '. reset($boardId) . ') { items(ids: '. reset($itemId) .') { updates { postText: text_body creatorIdPost: creator_id replies { idResponse: id responseText: text_body creator_id}}}}}';
+		$_lastComment = getMondayData($queryLastComment); 
+		$postText = getValuesByKey('postText', $_lastComment);
+		$responseText = getValuesByKey('responseText', $_lastComment);
+		$lastResponseId = getValuesByKey('idResponse', $_lastComment);
+		$creatorIdResponse = getValuesByKey('creator_id', $_lastComment); //usar reset()
+		$creatorIdPost = getValuesByKey('creatorIdPost', $_lastComment); //usar reset()
+  
+ 		print_r($nameBoard);
+ 
+		// retorno de ejemplo de columna Cronograma
+		//"{\"from\":\"2021-03-12\",\"to\":\"2021-03-12\",\"visualization_type\":\"milestone\",\"changed_at\":\"2021-03-12T14:08:52.537Z\"}"
+		if(array_key_exists("visualization_type", $hito)){
+			$milestone = 1;
+		} else {
+			$milestone = 0;
+		}
+	 
+		if($duration["running"] === 'false'){
 		 
 			$timetrack->setBoardId(reset($boardId));
 			$timetrack->setItemId(reset($itemId));
 			$timetrack->setUserId(reset($userId));
-			$timetrack->setUserEmail($userEmail);
-			$timetrack->setTPP($TPPcolumn);
+			$timetrack->setUserEmail($emailUsuario);
+			$timetrack->setTPP($tpp);
 			$timetrack->setItemName($itemName);
-			$timetrack->setDuration($result['duration']);
+			$timetrack->setDuration($duration["duration"]);
+			$timetrack->setMilestone($milestone);
 			$timetrack->setDate();
+			$timetrack->setResponseText(end($responseText));
+			$timetrack->setLastResponseId(end($lastResponseId));
+			$timetrack->setCreatorIdResponse(end($creatorIdResponse));
+			$timetrack->setCreatorIdPost($creatorIdPost);
+			$timetrack->setPostText($postText); 
+			$timetrack->setNameBoard($nameBoard); 
 			$timetrackInfo = $timetrack->createTimetrack();
 
 			if(!empty($timetrackInfo)) {
@@ -63,32 +89,13 @@ switch($requestMethod) {
 			header('Content-Type: application/json');
 			echo $js_encode;
 		}
+		
 		break;
 	default:
 	header("HTTP/1.0 405 Method Not Allowed");
 	break;
 }
-
-function objectToArray( $object ){
-	if( !is_object( $object ) && !is_array( $object ) ){
-	 return $object;
-  }
- if( is_object( $object ) ){
-	 $object = get_object_vars( $object );
- }
-	 return array_map( 'objectToArray', $object );
- }
-
- function filter_array_keys(array $array, $keys)
-{
-    if (is_callable($keys)) {
-        $keys = array_filter(array_keys($array), $keys);
-    }
-
-    return array_intersect_key($array, array_flip($keys));
-}
-
-
+ 
 /**
 * Get all values from specific key in a multidimensional array
 *
@@ -104,9 +111,43 @@ function getValuesByKey($key, array $arr){
     return count($val) > 1 ? $val : array_pop($val);
 }
 
-function array_key_first(array $array)
+
+function array_values_recursive($array)
 {
-    return key(array_slice($array, 0, 1));
+    $arrayValues = array();
+
+    foreach ($array as $value)
+    {
+        if (is_scalar($value) OR is_resource($value))
+        {
+             $arrayValues[] = $value;
+        }
+        elseif (is_array($value))
+        {
+             $arrayValues = array_merge($arrayValues, array_values_recursive($value));
+        }
+    }
+
+    return $arrayValues;
+}
+
+function getMondayData($query){
+	//GRAPHQL ACCESS
+	$token = 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjEwMTY4OTU4MSwidWlkIjoyMDY0NzE3NSwiaWFkIjoiMjAyMS0wMy0wM1QxNToxMDoyMy41NDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6NzI5MzkzOSwicmduIjoidXNlMSJ9._dUd7R_8tLFW7Cg6sL6MFBX7xUuFGlM78XbukwI3V0c';
+	$apiUrl = 'https://api.monday.com/v2';
+	$headers = ['Content-Type: application/json', 'Authorization: ' . $token];
+	//
+
+	$data = @file_get_contents($apiUrl, false, stream_context_create([
+		'http' => [
+		'method' => 'POST',
+		'header' => $headers,
+		'content' => json_encode(['query' => $query]),
+		]
+	]));
+
+	$result = json_decode($data, true);
+	return $result;
 }
 
 ?>

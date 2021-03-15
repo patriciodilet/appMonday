@@ -19,9 +19,16 @@ CREATE TABLE `MondayGestionDiaria` (
   `userId` int(10) NOT NULL,
   `userEmail` varchar(100) NOT NULL,
   `TPP` varchar(100),
+  `nameBoard` varchar(255),
   `itemName` varchar(255),
   `duration` varchar(255),
-  `date` varchar(100)
+  `milestone` int(1),
+  `date` varchar(100),
+  `postText` varchar(255),
+  `responseText` text,
+  `lastResponseId` int(11),
+  `creatorIdResponse` int(11),
+  `creatorIdPost` int(11)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
  

@@ -1,6 +1,4 @@
 <?php
-
-
 $requestMethod = $_SERVER["REQUEST_METHOD"];
 include('../class/Timetrack.php');
 $timetrack = new Timetrack();
@@ -21,38 +19,71 @@ switch($requestMethod) {
 	    $colBId = getValuesByKey('columnId', $oArray);
 	    $colCId = getValuesByKey('cronogramaId', $oArray);
 
-		$queryUsuario = '{users(ids: ' . reset($userId) . ') {email}}';
-		$_emailUsuario = getMondayData($queryUsuario);
-		$emailUsuario = getValuesByKey('email', $_emailUsuario);
+		$queryGeneral = '{
+			users(ids: ' . reset($userId) . ') {
+			  email
+			}
+			boards(ids: '. reset($boardId) . ') {
+			  nameBoard: name
+			  items(ids: '. reset($itemId) .') {
+				itemName: name
+				updates {
+				  postText: text_body
+				  creatorIdPost: creator_id
+				  replies {
+					idResponse: id
+					responseText: text_body
+					creatorIdResponse: creator_id
+				  }
+				}
+			  }
+			}
+		  }';
+		$_queryGeneral = getMondayData($queryGeneral);
+		$emailUsuario = getValuesByKey('email', $_queryGeneral);
+		$itemName = getValuesByKey('itemName', $_queryGeneral);
+		$nameBoard = getValuesByKey('nameBoard', $_queryGeneral);
+		$postText = getValuesByKey('postText', $_queryGeneral);
+		$responseText = getValuesByKey('responseText', $_queryGeneral);
+		$lastResponseId = getValuesByKey('idResponse', $_queryGeneral); //usar end()
+		$creatorIdResponse = getValuesByKey('creatorIdResponse', $_queryGeneral); //usar end()
+		$creatorIdPost = getValuesByKey('creatorIdPost', $_queryGeneral); //usar end()
 
-		$querytpp = '{boards(ids: '. reset($boardId) . ') {items (ids: '. reset($itemId) .') {column_values (ids: [ '. reset($colTpp) .' ])  {text}}}}';
-		$_tpp = getMondayData($querytpp); 
-		$tpp = getValuesByKey('text', $_tpp);
+		$queryCronograma = '{
+			items(ids: '. reset($itemId) .') {
+			  column_values(ids: ["'. reset($colCId) .'"]) {
+				value
+			  }
+			}
+		  }
+		  ';
+		$_queryCronograma = getMondayData($queryCronograma);
+		$cronograma = getValuesByKey('value', $_queryCronograma);
+		$hito = json_decode($cronograma, true);
+		
+		$queryTpp = '{
+			items(ids: '. reset($itemId) .') {
+			  column_values(ids: ["'. reset($colTpp) .'"]) {
+				text
+				value
+			  }
+			}
+		  }
+		  ';
+		$_queryTpp = getMondayData($queryTpp);
+		$tpp = getValuesByKey('value', $_queryTpp);
 
-		$queryItemName = '{boards(ids: '. reset($boardId) . ') {nameBoard: name items (ids: '. reset($itemId) .') {itemName: name}}}';
-		$_itemName = getMondayData($queryItemName); 
-		$itemName = getValuesByKey('itemName', $_itemName);
-		$nameBoard = getValuesByKey('nameBoard', $_itemName);
-
-		$queryDuration = '{items (ids: '. reset($itemId) . ') { column_values (ids: ["'. reset($colAId) . '"])  { value }}}';
-		$_duration = getMondayData($queryDuration); 
-		$objDuration = getValuesByKey('value', $_duration);
-		$duration = json_decode($objDuration, true);
-
-		$queryCronograma = '{boards(ids: '. reset($boardId) . ') { items(ids:'. reset($itemId) .') { column_values(ids: ["'. reset($colCId) . '"]) { value }}}}';
-		$_hito = getMondayData($queryCronograma); 
-		$objHito = getValuesByKey('value', $_hito);
-		$hito = json_decode($objHito, true);
-
-		$queryLastComment = '{boards(ids: '. reset($boardId) . ') { items(ids: '. reset($itemId) .') { updates { postText: text_body creatorIdPost: creator_id replies { idResponse: id responseText: text_body creator_id}}}}}';
-		$_lastComment = getMondayData($queryLastComment); 
-		$postText = getValuesByKey('postText', $_lastComment);
-		$responseText = getValuesByKey('responseText', $_lastComment);
-		$lastResponseId = getValuesByKey('idResponse', $_lastComment);
-		$creatorIdResponse = getValuesByKey('creator_id', $_lastComment); //usar reset()
-		$creatorIdPost = getValuesByKey('creatorIdPost', $_lastComment); //usar reset()
-  
- 		print_r($nameBoard);
+		$queryTimeTracking = '{
+			items(ids: '. reset($itemId) .') {
+			  column_values(ids: ["'. reset($colAId) .'"]) {
+				value
+			  }
+			}
+		  }
+		  ';
+		$_queryTimeTracking = getMondayData($queryTimeTracking);
+		$timeTrackingData = getValuesByKey('value', $_queryTimeTracking);
+		$timeTracking = json_decode($timeTrackingData, true);
  
 		// retorno de ejemplo de columna Cronograma
 		//"{\"from\":\"2021-03-12\",\"to\":\"2021-03-12\",\"visualization_type\":\"milestone\",\"changed_at\":\"2021-03-12T14:08:52.537Z\"}"
@@ -62,7 +93,7 @@ switch($requestMethod) {
 			$milestone = 0;
 		}
 	 
-		if($duration["running"] === 'false'){
+		if($timeTracking["running"] === 'false'){
 		 
 			$timetrack->setBoardId(reset($boardId));
 			$timetrack->setItemId(reset($itemId));
@@ -70,7 +101,7 @@ switch($requestMethod) {
 			$timetrack->setUserEmail($emailUsuario);
 			$timetrack->setTPP($tpp);
 			$timetrack->setItemName($itemName);
-			$timetrack->setDuration($duration["duration"]);
+			$timetrack->setDuration($timeTracking["duration"]);
 			$timetrack->setMilestone($milestone);
 			$timetrack->setDate();
 			$timetrack->setResponseText(end($responseText));
@@ -109,26 +140,6 @@ function getValuesByKey($key, array $arr){
         if($k == $key) array_push($val, $v);
     });
     return count($val) > 1 ? $val : array_pop($val);
-}
-
-
-function array_values_recursive($array)
-{
-    $arrayValues = array();
-
-    foreach ($array as $value)
-    {
-        if (is_scalar($value) OR is_resource($value))
-        {
-             $arrayValues[] = $value;
-        }
-        elseif (is_array($value))
-        {
-             $arrayValues = array_merge($arrayValues, array_values_recursive($value));
-        }
-    }
-
-    return $arrayValues;
 }
 
 function getMondayData($query){

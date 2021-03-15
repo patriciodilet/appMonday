@@ -132,7 +132,7 @@ class Timetrack
     // update Timetrack
     public function updateTimetrack() {
         try {
-		    $sql = "UPDATE TimeTracking SET timetrack=:timetrack WHERE id=:timetrackId";
+		    $sql = "UPDATE MondayGestionDiaria SET timetrack=:timetrack WHERE id=:timetrackId";
 		    $data = [
 			    'timetrack' => $this->_timetrack,
                 'timetrackId' => $this->_timetrackId,
@@ -149,7 +149,7 @@ class Timetrack
     // getAll timetrack
     public function getAllTimetrack() {
     	try {
-    		$sql = "SELECT * FROM TimeTracking";
+    		$sql = "SELECT * FROM MondayGestionDiaria";
 		    $stmt = $this->db->prepare($sql);
 
 		    $stmt->execute();
@@ -163,7 +163,7 @@ class Timetrack
     // get Timetrack
     public function getTimetrack() {
     	try {
-    		$sql = "SELECT * FROM TimeTracking WHERE id=:timetrackId";
+    		$sql = "SELECT * FROM MondayGestionDiaria WHERE id=:timetrackId";
 		    $stmt = $this->db->prepare($sql);
 		    $data = [
 		    	'timetrackId' => $this->_timetrackID
@@ -179,7 +179,7 @@ class Timetrack
     // delete Timetrack
     public function deleteTimetrack() {
     	try {
-	    	$sql = "DELETE FROM TimeTracking WHERE id=:timetrackId";
+	    	$sql = "DELETE FROM MondayGestionDiaria WHERE id=:timetrackId";
 		    $stmt = $this->db->prepare($sql);
 		    $data = [
 		    	'timetrackId' => $this->_timetrackID

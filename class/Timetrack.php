@@ -56,7 +56,7 @@ class Timetrack
 	}
 
 	public function setDuration($duration){
-		$this->_duration = $duration;
+		$this->_duration = gmdate("H:i:s", $duration);
 	}
     
 	public function setMilestone($milestone){

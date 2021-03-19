@@ -100,7 +100,6 @@ class Timetrack
     public function createTimetrack() {
 		try {
     		$sql = 'INSERT INTO MondayGestionDiaria (boardId, itemId, userId, userEmail, TPP, itemName, duration, milestone, date, postText, responseText, lastResponseId, creatorIdResponse, creatorIdPost, nameBoard)  VALUES (:boardId, :itemId, :userId, :userEmail, :TPP, :itemName, :duration, :milestone, :date, :postText, :responseText, :lastResponseId, :creatorIdResponse, :creatorIdPost, :nameBoard)';
-    		// $sql = 'INSERT INTO MondayGestionDiaria (boardId, itemId, userId, userEmail, TPP, itemName, duration, milestone, date)  VALUES (:boardId, :itemId, :userId, :userEmail, :TPP, :itemName, :duration, :milestone, :date)';
     		$data = [
 			    'boardId' => $this->_boardId,
 			    'itemId' => $this->_itemId,
@@ -145,7 +144,7 @@ class Timetrack
 			die("There's an error in the query!");
 		}
     }
-   
+
     // getAll timetrack
     public function getAllTimetrack() {
     	try {

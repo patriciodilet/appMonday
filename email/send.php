@@ -124,7 +124,7 @@ function sendEmail($emailInfo){
         $mail->addCustomHeader('X-SES-CONFIGURATION-SET', $configurationSet);
 
         $mail->addAddress($recipient);
-        // $mail->AddCC('ksandoval@legaltec.cl', 'Keyla Sandoval');
+        $mail->AddCC('ksandoval@legaltec.cl', 'Keyla Sandoval');
         // $mail->AddCC('mvenegas@legaltec.cl', 'Manuel Venegas');
         // $recipients = array(
         //     'person1@domain.com' => 'Person One',

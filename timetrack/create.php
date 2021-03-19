@@ -71,7 +71,7 @@ switch($requestMethod) {
 		  }
 		  ';
 		$_queryTpp = getMondayData($queryTpp);
-		$tpp = getValuesByKey('value', $_queryTpp);
+		$tpp = getValuesByKey('text', $_queryTpp);
 
 		$queryTimeTracking = '{
 			items(ids: '. reset($itemId) .') {
@@ -87,6 +87,7 @@ switch($requestMethod) {
  
 		// retorno de ejemplo de columna Cronograma
 		//"{\"from\":\"2021-03-12\",\"to\":\"2021-03-12\",\"visualization_type\":\"milestone\",\"changed_at\":\"2021-03-12T14:08:52.537Z\"}"
+        $hito = is_array($hito) ? $hito : array();
 		if(array_key_exists("visualization_type", $hito)){
 			$milestone = 1;
 		} else {
@@ -104,9 +105,9 @@ switch($requestMethod) {
 			$timetrack->setDuration($timeTracking["duration"]);
 			$timetrack->setMilestone($milestone);
 			$timetrack->setDate();
-			$timetrack->setResponseText(end($responseText));
-			$timetrack->setLastResponseId(end($lastResponseId));
-			$timetrack->setCreatorIdResponse(end($creatorIdResponse));
+			$timetrack->setResponseText($responseText);
+			$timetrack->setLastResponseId($lastResponseId);
+			$timetrack->setCreatorIdResponse($creatorIdResponse);
 			$timetrack->setCreatorIdPost($creatorIdPost);
 			$timetrack->setPostText($postText); 
 			$timetrack->setNameBoard($nameBoard); 

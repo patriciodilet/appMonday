@@ -6,6 +6,7 @@ require '../vendor/autoload.php';
 $requestMethod = $_SERVER["REQUEST_METHOD"];
 include('../class/Email.php');
 $email = new Email();
+
 switch($requestMethod) {
 	case 'POST':
 		$json = file_get_contents('php://input');
@@ -33,7 +34,34 @@ switch($requestMethod) {
         header('Content-Type: application/json');
         echo $js_encode;
 		break;
-	default:
+	//default:
+	header("HTTP/1.0 405 Method Not Allowed");
+	break;
+
+    case 'GET':        
+        $allReportData = $email->getAllReportData();
+
+        $listEmail = array();
+        foreach ($allReportData as $report) {
+            array_push($listEmail, $report["userEmail"]);
+        }
+        $listEmail= array_unique($listEmail);
+        foreach($listEmail as $val) {
+            $email->setUserEmail($val);
+            $reportData = $email->getReportData();
+
+            if(sendEmail($reportData, $val)){
+                foreach($reportData as $item){
+                    $email->setItemId($item["itemId"]);
+                    $emailUpdate = $email->updateSendEmailStatusByItemId();
+                }
+                print_r("email enviado");
+            } else {
+                print_r("email NO enviado");
+            }
+        }
+        
+		break;
 	header("HTTP/1.0 405 Method Not Allowed");
 	break;
 }
@@ -72,12 +100,13 @@ function getMondayData($query){
 	return $result;
 }
 
-function sendEmail($emailInfo){
-    $userEmail = getValuesByKey('userEmail', $emailInfo);
+function sendEmail($reportData, $email){
+    //$userEmail = getValuesByKey('userEmail', $emailInfo);
 
     $sender = 'test@8x.cl';
     $senderName = 'Legaltec Monday';
-    $recipient = is_array($userEmail) ? reset($userEmail) : $userEmail;
+    $recipient = $email;
+    //$recipient = is_array($userEmail) ? reset($userEmail) : $userEmail;
 
 
     $usernameSmtp = 'test@8x.cl';
@@ -106,7 +135,7 @@ function sendEmail($emailInfo){
                     <th>Ultima actualización</th>
                     <th>Ultima respuesta</th>
                 </tr>";
-    $bodyHtml .= displayResultsAsTable($emailInfo);
+    $bodyHtml .= displayResultsAsTable($reportData);
     $bodyHtml .= '</table>';
     $bodyHtml .= "</body></html>";
 
@@ -124,7 +153,7 @@ function sendEmail($emailInfo){
         $mail->addCustomHeader('X-SES-CONFIGURATION-SET', $configurationSet);
 
         $mail->addAddress($recipient);
-        $mail->AddCC('ksandoval@legaltec.cl', 'Keyla Sandoval');
+        //$mail->AddCC('ksandoval@legaltec.cl', 'Keyla Sandoval');
         // $mail->AddCC('mvenegas@legaltec.cl', 'Manuel Venegas');
         // $recipients = array(
         //     'person1@domain.com' => 'Person One',

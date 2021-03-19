@@ -64,23 +64,25 @@ class Timetrack
 	}
 
 	public function setPostText($postText) {
-        $this->_postText = $postText;
+		$text =  is_array($postText) ? reset($postText) : $postText;
+        $this->_postText = substr($text,0,250);
     }
 
 	public function setResponseText($responseText) {
-        $this->_responseText = $responseText;
+		$text =  is_array($responseText) ? reset($responseText) : $responseText;
+        $this->_responseText = substr($text,0,250);
     }
 
 	public function setLastResponseId($lastResponseId) {
-        $this->_lastResponseId = $lastResponseId;
+        $this->_lastResponseId = is_array($lastResponseId) ? reset($lastResponseId) : $lastResponseId;
     }
 
 	public function setCreatorIdResponse($creatorIdResponse) {
-        $this->_creatorIdResponse = $creatorIdResponse;
+        $this->_creatorIdResponse = is_array($creatorIdResponse) ? reset($creatorIdResponse) : $creatorIdResponse;
     }
 
 	public function setCreatorIdPost($creatorIdPost) {
-        $this->_creatorIdPost = $creatorIdPost;
+        $this->_creatorIdPost = is_array($creatorIdPost) ? reset($creatorIdPost) : $creatorIdPost;
     }
 
 	public function setNameBoard($nameBoard) {

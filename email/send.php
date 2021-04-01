@@ -103,16 +103,16 @@ function getMondayData($query){
 function sendEmail($reportData, $email){
     //$userEmail = getValuesByKey('userEmail', $emailInfo);
 
-    $sender = 'test@8x.cl';
+    $sender = 'legaltec.linux@legaltec.cl';
     $senderName = 'Legaltec Monday';
     $recipient = $email;
     //$recipient = is_array($userEmail) ? reset($userEmail) : $userEmail;
 
 
-    $usernameSmtp = 'test@8x.cl';
-    $passwordSmtp = '1gi11261gi1126';
+    $usernameSmtp = 'legaltec.linux@legaltec.cl';
+    $passwordSmtp = 'Ju87mWq#a#';
     $configurationSet = 'ConfigSet';
-    $host = '8x.cl';
+    $host = 'legaltec.cl';
     $port = 587;
 
     $subject = 'Informe registro de horas';
@@ -153,7 +153,8 @@ function sendEmail($reportData, $email){
         $mail->addCustomHeader('X-SES-CONFIGURATION-SET', $configurationSet);
 
         $mail->addAddress($recipient);
-        $mail->AddCC('ksandoval@legaltec.cl', 'Keyla Sandoval');
+        $mail->AddCC('pdiazl@legaltec.cl', 'Patricio Diaz');
+        //$mail->AddCC('ksandoval@legaltec.cl', 'Keyla Sandoval');
         //$mail->AddCC('mvenegas@legaltec.cl', 'Manuel Venegas');
         // $recipients = array(
         //     'person1@domain.com' => 'Person One',

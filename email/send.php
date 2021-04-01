@@ -128,7 +128,7 @@ function sendEmail($reportData, $email){
                     <th>Usuario</th>
                     <th>Tablero</th>
                     <th>Tarea</th>
-                    <th>duration</th>
+                    <th>Duración</th>
                     <th>TPP</th>
                     <th>Es Hito</th>
                     <th>Fecha de registro</th>
@@ -153,8 +153,8 @@ function sendEmail($reportData, $email){
         $mail->addCustomHeader('X-SES-CONFIGURATION-SET', $configurationSet);
 
         $mail->addAddress($recipient);
-        //$mail->AddCC('ksandoval@legaltec.cl', 'Keyla Sandoval');
-        // $mail->AddCC('mvenegas@legaltec.cl', 'Manuel Venegas');
+        $mail->AddCC('ksandoval@legaltec.cl', 'Keyla Sandoval');
+        //$mail->AddCC('mvenegas@legaltec.cl', 'Manuel Venegas');
         // $recipients = array(
         //     'person1@domain.com' => 'Person One',
         //     'person2@domain.com' => 'Person Two',

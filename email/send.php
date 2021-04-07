@@ -110,7 +110,7 @@ function sendEmail($reportData, $email){
 
 
     $usernameSmtp = 'test@8x.cl';
-    $passwordSmtp = '1gi11261gi1126';
+    $passwordSmtp = 'legaltec';
     $configurationSet = 'ConfigSet';
     $host = '8x.cl';
     $port = 587;
@@ -153,7 +153,8 @@ function sendEmail($reportData, $email){
         $mail->addCustomHeader('X-SES-CONFIGURATION-SET', $configurationSet);
 
         $mail->addAddress($recipient);
-        $mail->AddCC('ksandoval@legaltec.cl', 'Keyla Sandoval');
+        $mail->AddCC('pdiazl@legaltec.cl', 'Patricio Diaz');
+        // $mail->AddCC('ksandoval@legaltec.cl', 'Keyla Sandoval');
         //$mail->AddCC('mvenegas@legaltec.cl', 'Manuel Venegas');
         // $recipients = array(
         //     'person1@domain.com' => 'Person One',

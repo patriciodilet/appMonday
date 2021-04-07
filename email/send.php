@@ -39,8 +39,10 @@ switch($requestMethod) {
 	break;
 
     case 'GET':        
-        // $allReportData = $email->getAllReportData();
-        $allReportData = [];
+         $allReportData = $email->getAllReportData();
+        // print("<pre>".print_r($allReportData,true)."</pre>");
+        // print_r($allReportData);
+        //$allReportData = [];
         sendDailyReportEmail($allReportData);
         // if(sendDailyReportEmail($allReportData)){
         //     foreach ($allReportData as $report) {
@@ -120,46 +122,47 @@ function getMondayData($query){
 function sendDailyReportEmail($reportData){
     //$userEmail = getValuesByKey('userEmail', $emailInfo);
 
-    // $sender = 'legaltec.linux@legaltec.cl';
-    $sender = 'test@8x.cl';
+    $sender = 'legaltec.linux@legaltec.cl';
+    //$sender = 'test@8x.cl';
     $senderName = 'Legaltec Monday';
     $recipient = 'pdiazl@legaltec.cl';
     //$recipient = is_array($userEmail) ? reset($userEmail) : $userEmail;
 
 
-    // $usernameSmtp = 'legaltec.linux';
-    // $passwordSmtp = 'Ju87mWq#a#';
-    $usernameSmtp = 'test@8x.cl';
-    $passwordSmtp = 'legaltec';
+    $usernameSmtp = 'legaltec.linux';
+    $passwordSmtp = 'Ju87mWq#a#';
+    // $usernameSmtp = 'test@8x.cl';
+    // $passwordSmtp = 'legaltec';
     $configurationSet = 'ConfigSet';
-    $host = '8x.cl';
-    $port = 465;
-    // $port = 587;
+    //$host = '8x.cl';
+    $host = '172.20.70.8';
+    //$port = 465;
+     $port = 587;
 
     $subject = 'Informe registro de horas';
     $bodyText =  "Registro de Horas\r\n";
-    
-    $bodyHtml = "<html>";
-    $bodyHtml .= "<body>";
-    $bodyHtml .= '<h1>Registro de Horas</h1>';
+    $bodyHtml = "test";
+    // $bodyHtml = "<html>";
+    // $bodyHtml .= "<body>";
+    // $bodyHtml .= '<h1>Registro de Horas</h1>';
 
-    $bodyHtml .= '<table rules="all" style="border-color: #666; width:100%;" cellpadding="10">';
-    $bodyHtml .= "<tr style='background: #eee;'>
-                    <th>id Tarea</th>
-                    <th>Usuario</th>
-                    <th>Tablero</th>
-                    <th>Tarea</th>
-                    <th>Duración</th>
-                    <th>TPP</th>
-                    <th>Es Hito</th>
-                    <th>Fecha de registro</th>
-                    <th>Ultima actualización</th>
-                    <th>Ultima respuesta</th>
-                    <th>Nuevo</th>
-                </tr>";
-    $bodyHtml .= displayResultsAsTable($reportData);
-    $bodyHtml .= '</table>';
-    $bodyHtml .= "</body></html>";
+    // $bodyHtml .= '<table rules="all" style="border-color: #666; width:100%;" cellpadding="10">';
+    // $bodyHtml .= "<tr style='background: #eee;'>
+    //                 <th>id Tarea</th>
+    //                 <th>Usuario</th>
+    //                 <th>Tablero</th>
+    //                 <th>Tarea</th>
+    //                 <th>Duración</th>
+    //                 <th>TPP</th>
+    //                 <th>Es Hito</th>
+    //                 <th>Fecha de registro</th>
+    //                 <th>Ultima actualización</th>
+    //                 <th>Ultima respuesta</th>
+    //                 <th>Nuevo</th>
+    //             </tr>";
+    // $bodyHtml .= displayResultsAsTable($reportData);
+    // $bodyHtml .= '</table>';
+    // $bodyHtml .= "</body></html>";
 
     $mail = new PHPMailer(true);
 
@@ -172,7 +175,7 @@ function sendDailyReportEmail($reportData){
         $mail->Port       = $port;
         $mail->SMTPAuth   = true;
         $mail->SMTPSecure = 'tls';
-        $mail->addCustomHeader('X-SES-CONFIGURATION-SET', $configurationSet);
+        //$mail->addCustomHeader('X-SES-CONFIGURATION-SET', $configurationSet);
 
         $mail->addAddress($recipient);
         //$mail->AddCC('pdiazl@legaltec.cl', 'Patricio Diaz');
@@ -192,7 +195,7 @@ function sendDailyReportEmail($reportData){
         $mail->Subject    = $subject;
         $mail->Body       = $bodyHtml;
         $mail->AltBody    = $bodyText;
-        $mail->CharSet    = 'UTF-8';
+       // $mail->CharSet    = 'UTF-8';
         $mail->Send();
         echo "Email sent!" , PHP_EOL;
         return true;

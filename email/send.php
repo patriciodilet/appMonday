@@ -38,32 +38,209 @@ switch($requestMethod) {
 	header("HTTP/1.0 405 Method Not Allowed");
 	break;
 
-    case 'GET':        
-        $allReportData = $email->getAllReportData();
+    case 'GET':      
+        $query = $_GET['query'];  
+       // print_r($query);
 
-        $listEmail = array();
-        foreach ($allReportData as $report) {
-            array_push($listEmail, $report["userEmail"]);
+        switch($query) {
+            case 'reportByWeek':
+                $allReportData = $email->getAllReportByWeek();
+                if(sendEmail($allReportData)){
+                    foreach ($allReportData as $report) {
+                        $email->setItemId($report["itemId"]);
+                        //$emailUpdate = $email->updateSendEmailStatusByItemId();
+                    }
+                    print_r("email enviado reportByWeek");
+                } else {
+                    print_r("email NO enviado reportByWeek");
+                }
+                break;
+            case "reportByMonth":
+                $allReportData = $email->getAllReportByMonth();
+                if(sendEmail($allReportData)){
+                    foreach ($allReportData as $report) {
+                        $email->setItemId($report["itemId"]);
+                        $emailUpdate = $email->updateSendEmailStatusByItemId();
+                    }
+                    print_r("email enviado reportByMonth");
+                } else {
+                    print_r("email NO enviado reportByMonth");
+                }
+                break;
+            case "reportByUser":
+                $allReportData = $email->getWeekReportByUser();
+
+                $listEmail = array();
+                foreach ($allReportData as $report) {
+                    $email->setUserEmail($report["userEmail"]);
+                    $reportData = $email->getReportByUser();
+                    print_r($report["userEmail"]);
+
+                    if(sendEmail($reportData, $report["userEmail"])){
+                        foreach($reportData as $item){
+                            $email->setItemId($item["itemId"]);
+                            $emailUpdate = $email->updateSendEmailStatusByItemId();
+                        }
+                        print_r("email enviado");
+                    } else {
+                        print_r("email NO enviado");
+                    }
+
+                }
+               
+                break;
+                default:
         }
-        $listEmail= array_unique($listEmail);
-        foreach($listEmail as $val) {
-            $email->setUserEmail($val);
-            $reportData = $email->getReportData();
 
-            if(sendEmail($reportData, $val)){
-                foreach($reportData as $item){
-                    $email->setItemId($item["itemId"]);
+ /*
+        if($query = 'reportByWeek') {
+            $allReportData = $email->getAllReportByWeek();
+            // print("<pre>".print_r($allReportData,true)."</pre>");
+            // print_r($allReportData);
+            //$allReportData = [];
+            //sendAllReportByWeek($allReportData);
+            if(sendEmail($allReportData)){
+                foreach ($allReportData as $report) {
+                    $email->setItemId($report["itemId"]);
                     $emailUpdate = $email->updateSendEmailStatusByItemId();
                 }
-                print_r("email enviado");
+                print_r("email enviado reportByWeek");
             } else {
-                print_r("email NO enviado");
+                print_r("email NO enviado reportByWeek");
             }
+        } elseif($query = 'reportByMonth' ) {
+            $allReportData = $email->getAllReportByMonth();
+            if(sendEmail($allReportData)){
+                foreach ($allReportData as $report) {
+                    $email->setItemId($report["itemId"]);
+                    $emailUpdate = $email->updateSendEmailStatusByItemId();
+                }
+                print_r("email enviado reportByMonth");
+            } else {
+                print_r("email NO enviado reportByMonth");
+            }
+        } elseif ($query = 'reportByUser'){
+            
+            $allReportData = $email->getAllReportData();
+
+            $listEmail = array();
+            foreach ($allReportData as $report) {
+                array_push($listEmail, $report["userEmail"]);
+            }
+            $listEmail= array_unique($listEmail);
+            foreach($listEmail as $val) {
+                $email->setUserEmail($val);
+                $reportData = $email->getReportByUser();
+print_r($email);
+print_r("email enviado reportByUser");
+print_r($reportData);
+
+
+                // if(sendEmail($reportData, $email)){
+                //     foreach($reportData as $item){
+                //         $email->setItemId($item["itemId"]);
+                //         $emailUpdate = $email->updateSendEmailStatusByItemId();
+                //     }
+                //     print_r("email enviado");
+                // } else {
+                //     print_r("email NO enviado");
+                // }
+            }
+
+        } else {
+            print_r("Ha ocurrido un error");
         }
-        
+        */
 		break;
 	header("HTTP/1.0 405 Method Not Allowed");
 	break;
+
+    // case 'GET':        
+    //     $allReportData = $email->getAllReportData();
+
+    //     $listEmail = array();
+    //     foreach ($allReportData as $report) {
+    //         array_push($listEmail, $report["userEmail"]);
+    //     }
+    //     $listEmail= array_unique($listEmail);
+    //     foreach($listEmail as $val) {
+    //         $email->setUserEmail($val);
+    //         $reportData = $email->getReportData();
+
+    //         if(sendEmail($reportData, $val)){
+    //             foreach($reportData as $item){
+    //                 $email->setItemId($item["itemId"]);
+    //                 $emailUpdate = $email->updateSendEmailStatusByItemId();
+    //             }
+    //             print_r("email enviado");
+    //         } else {
+    //             print_r("email NO enviado");
+    //         }
+    //     }
+        
+	// 	break;
+	// header("HTTP/1.0 405 Method Not Allowed");
+	// break;
+}
+
+function reportByUser(){
+    $allReportData = $email->getAllReportByMonth();
+
+    //$email->setUserEmail("pdiazl@legaltec.cl");
+   // $allReportData = $email->getWeekReportByUser();
+
+    // print_r($allReportData);
+     //print_r('reportByUser');
+
+    // $listEmail = array();
+    // foreach ($allReportData as $report) {
+    //     array_push($listEmail, $report["userEmail"]);
+    // }
+    // $listEmail= array_unique($listEmail);
+    // foreach($listEmail as $val) {
+    //     $email->setUserEmail($val);
+    //     $reportData = $email->getReportByUser();
+    //     print_r($email);
+    //     print_r("email enviado reportByUser");
+    //     print_r($reportData);
+
+    //     // if(sendEmail($reportData, $email)){
+    //     //     foreach($reportData as $item){
+    //     //         $email->setItemId($item["itemId"]);
+    //     //         $emailUpdate = $email->updateSendEmailStatusByItemId();
+    //     //     }
+    //     //     print_r("email enviado");
+    //     // } else {
+    //     //     print_r("email NO enviado");
+    //     // }
+    // }
+}
+
+function reportByMonth(){
+    $allReportData = $email->getAllReportByMonth();
+    if(sendEmail($allReportData)){
+        foreach ($allReportData as $report) {
+            $email->setItemId($report["itemId"]);
+            $emailUpdate = $email->updateSendEmailStatusByItemId();
+        }
+        print_r("email enviado reportByMonth");
+    } else {
+        print_r("email NO enviado reportByMonth");
+    }
+}
+
+function reportByWeek(){
+    $allReportData = $email->getAllReportByWeek();
+    // print("<pre>".print_r($allReportData,true)."</pre>");
+    if(sendEmail($allReportData)){
+        foreach ($allReportData as $report) {
+            $email->setItemId($report["itemId"]);
+            //$emailUpdate = $email->updateSendEmailStatusByItemId();
+        }
+        print_r("email enviado reportByWeek");
+    } else {
+        print_r("email NO enviado reportByWeek");
+    }
 }
  
 /**
@@ -100,12 +277,13 @@ function getMondayData($query){
 	return $result;
 }
 
-function sendEmail($reportData, $email){
+function sendEmail($reportData, $email = null){
+     
     //$userEmail = getValuesByKey('userEmail', $emailInfo);
 
     $sender = 'test@8x.cl';
     $senderName = 'Legaltec Monday';
-    $recipient = $email;
+    $recipient = is_null($email) ? 'pdiazl@legaltec.cl' : $email;
     //$recipient = is_array($userEmail) ? reset($userEmail) : $userEmail;
 
 
@@ -113,6 +291,182 @@ function sendEmail($reportData, $email){
     $passwordSmtp = 'legaltec';
     $configurationSet = 'ConfigSet';
     $host = '8x.cl';
+    $port = 587;
+
+    $subject = 'Informe registro de horas';
+    $bodyText =  "Registro de Horas\r\n";
+    
+    $bodyHtml = "<html>";
+    $bodyHtml .= "<body>";
+    $bodyHtml .= '<h1>Registro de Horas</h1>';
+
+    $bodyHtml .= '<table rules="all" style="border-color: #666; width:100%;" cellpadding="10">';
+    $bodyHtml .= "<tr style='background: #eee;'>
+                    <th>id Tarea</th>
+                    <th>Usuario</th>
+                    <th>Tablero</th>
+                    <th>Tarea</th>
+                    <th>Duración</th>
+                    <th>TPP</th>
+                    <th>Es Hito</th>
+                    <th>Fecha de registro</th>
+                    <th>Ultima actualización</th>
+                    <th>Ultima respuesta</th>
+                    <th>Visto</th>
+                </tr>";
+    $bodyHtml .= displayResultsAsTable($reportData);
+    $bodyHtml .= '</table>';
+    $bodyHtml .= "</body></html>";
+
+    $mail = new PHPMailer(true);
+
+    try {
+        $mail->isSMTP();
+        $mail->setFrom($sender, $senderName);
+        $mail->Username   = $usernameSmtp;
+        $mail->Password   = $passwordSmtp;
+        $mail->Host       = $host;
+        $mail->Port       = $port;
+        $mail->SMTPAuth   = true;
+        $mail->SMTPSecure = 'tls';
+        $mail->addCustomHeader('X-SES-CONFIGURATION-SET', $configurationSet);
+
+        $mail->addAddress($recipient);
+        $mail->AddCC('pdiazl@legaltec.cl', 'Patricio Diaz');
+        // $mail->AddCC('ksandoval@legaltec.cl', 'Keyla Sandoval');
+        //$mail->AddCC('mvenegas@legaltec.cl', 'Manuel Venegas');
+        // $recipients = array(
+        //     'person1@domain.com' => 'Person One',
+        //     'person2@domain.com' => 'Person Two',
+        //     // ..
+        //  );
+        //  foreach($recipients as $email => $name)
+        //  {
+        //     $mail->AddCC($email, $name);
+        //  }
+
+        $mail->isHTML(true);
+        $mail->Subject    = $subject;
+        $mail->Body       = $bodyHtml;
+        $mail->AltBody    = $bodyText;
+        $mail->CharSet    = 'UTF-8';
+
+       
+         
+        $mail->Send();
+        echo "Email sent!" , PHP_EOL;
+        return true;
+    } catch (phpmailerException $e) {
+        echo "An error occurred. {$e->errorMessage()}", PHP_EOL; //Catch errors from PHPMailer.
+        return false;
+    } catch (Exception $e) {
+        echo "Email not sent. {$mail->ErrorInfo}", PHP_EOL; //Catch errors from LEGALTEC API.
+        return false;
+    }
+}
+
+function sendDailyReportEmail_($reportData){
+    //$userEmail = getValuesByKey('userEmail', $emailInfo);
+
+    $sender = 'legaltec.linux@legaltec.cl';
+    //$sender = 'test@8x.cl';
+    $senderName = 'Legaltec Monday';
+    $recipient = 'pdiazl@legaltec.cl';
+    //$recipient = is_array($userEmail) ? reset($userEmail) : $userEmail;
+
+
+    $usernameSmtp = 'legaltec.linux@legaltec.cl';
+    $passwordSmtp = 'Ju87mWq#a';
+    // $usernameSmtp = 'test@8x.cl';
+    // $passwordSmtp = 'legaltec';
+    $configurationSet = 'ConfigSet';
+    //$host = '8x.cl';
+    $host = '172.20.70.8';
+    //$port = 465;
+     $port = 587;
+
+    $subject = 'Informe registro de horas';
+    $bodyText =  "Registro de Horas\r\n";
+    $bodyHtml = "test";
+    // $bodyHtml = "<html>";
+    // $bodyHtml .= "<body>";
+    // $bodyHtml .= '<h1>Registro de Horas</h1>';
+
+    // $bodyHtml .= '<table rules="all" style="border-color: #666; width:100%;" cellpadding="10">';
+    // $bodyHtml .= "<tr style='background: #eee;'>
+    //                 <th>id Tarea</th>
+    //                 <th>Usuario</th>
+    //                 <th>Tablero</th>
+    //                 <th>Tarea</th>
+    //                 <th>Duración</th>
+    //                 <th>TPP</th>
+    //                 <th>Es Hito</th>
+    //                 <th>Fecha de registro</th>
+    //                 <th>Ultima actualización</th>
+    //                 <th>Ultima respuesta</th>
+    //                 <th>Nuevo</th>
+    //             </tr>";
+    // $bodyHtml .= displayResultsAsTable($reportData);
+    // $bodyHtml .= '</table>';
+    // $bodyHtml .= "</body></html>";
+
+    $mail = new PHPMailer(true);
+
+    try {
+        $mail->isSMTP();
+        $mail->setFrom($sender, $senderName);
+        $mail->Username   = $usernameSmtp;
+        $mail->Password   = $passwordSmtp;
+        $mail->Host       = $host;
+        $mail->Port       = $port;
+        $mail->SMTPAuth   = true;
+        $mail->SMTPSecure = 'tls';
+        //$mail->addCustomHeader('X-SES-CONFIGURATION-SET', $configurationSet);
+
+        $mail->addAddress($recipient);
+        //$mail->AddCC('pdiazl@legaltec.cl', 'Patricio Diaz');
+        //$mail->AddCC('ksandoval@legaltec.cl', 'Keyla Sandoval');
+        //$mail->AddCC('mvenegas@legaltec.cl', 'Manuel Venegas');
+        // $recipients = array(
+        //     'person1@domain.com' => 'Person One',
+        //     'person2@domain.com' => 'Person Two',
+        //     // ..
+        //  );
+        //  foreach($recipients as $email => $name)
+        //  {
+        //     $mail->AddCC($email, $name);
+        //  }
+
+        $mail->isHTML(true);
+        $mail->Subject    = $subject;
+        $mail->Body       = $bodyHtml;
+        $mail->AltBody    = $bodyText;
+       // $mail->CharSet    = 'UTF-8';
+        $mail->Send();
+        echo "Email sent!" , PHP_EOL;
+        return true;
+    } catch (phpmailerException $e) {
+        echo "An error occurred. {$e->errorMessage()}", PHP_EOL; //Catch errors from PHPMailer.
+        return false;
+    } catch (Exception $e) {
+        echo "Email not sent. {$mail->ErrorInfo}", PHP_EOL; //Catch errors from LEGALTEC API.
+        return false;
+    }
+}
+
+function sendEmail_($reportData, $email){
+    //$userEmail = getValuesByKey('userEmail', $emailInfo);
+
+    $sender = 'legaltec.linux@legaltec.cl';
+    $senderName = 'Legaltec Monday';
+    $recipient = $email;
+    //$recipient = is_array($userEmail) ? reset($userEmail) : $userEmail;
+
+
+    $usernameSmtp = 'legaltec.linux';
+    $passwordSmtp = 'Ju87mWq#a';
+    $configurationSet = 'ConfigSet';
+    $host = 'legaltec.cl';
     $port = 587;
 
     $subject = 'Informe registro de horas';
@@ -153,8 +507,8 @@ function sendEmail($reportData, $email){
         $mail->addCustomHeader('X-SES-CONFIGURATION-SET', $configurationSet);
 
         $mail->addAddress($recipient);
-        $mail->AddCC('pdiazl@legaltec.cl', 'Patricio Diaz');
-        // $mail->AddCC('ksandoval@legaltec.cl', 'Keyla Sandoval');
+        //$mail->AddCC('pdiazl@legaltec.cl', 'Patricio Diaz');
+        //$mail->AddCC('ksandoval@legaltec.cl', 'Keyla Sandoval');
         //$mail->AddCC('mvenegas@legaltec.cl', 'Manuel Venegas');
         // $recipients = array(
         //     'person1@domain.com' => 'Person One',
@@ -187,14 +541,24 @@ function displayResultsAsTable($resultsArray) {
     // argument must be an array
     if (is_array($resultsArray)) {
         foreach ($resultsArray as $key => $value) {
-            $val .= '<tr>';
-                foreach ($value as $f_key => $f_val) {
-                    $val .= '<td>'. $f_val .'</td>';
-                }
+            
+            if($value['sendEmail']){
+                $value['sendEmail'] = "";
+                $val .= '<tr>';
+            } else {
+                $value['sendEmail'] = "Nuevo";
+                $val .= '<tr bgcolor="#D5F5E3">';
+            }
+            foreach ($value as $f_key => $f_val) {
+                $val .= '<td>'. $f_val .'</td>';
+            }
             $val .= '</tr>';
             }
         }
         return $val;
     }
+
+
+
 
 ?>

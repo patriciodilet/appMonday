@@ -10,7 +10,7 @@ require '../vendor/autoload.php';
 
 // Replace sender@example.com with your "From" address.
 // This address must be verified with Amazon SES.
-$sender = 'test@8x.cl';
+$sender = 'legaltec.linux@legaltec.cl';
 $senderName = 'Legaltec Monday';
 
 // Replace recipient@example.com with a "To" address. If your account

@@ -1,0 +1,57 @@
+78891638,"Diagnóstico Vehicular  V3",ycalderon@legaltec.cl,"08 Rest - implementación de modelo y desarrollo de procedimiento",05-04-2021,17:51,20:07,1.6,,05-04-2021
+79273632,"Diagnóstico Vehicular  V3",ycalderon@legaltec.cl,"09 Rest - Solicitudes de Informes desde sistema interno",06-04-2021,18:46,19:47,1,,06-04-2021
+79933757,"Diagnóstico Vehicular  V3",ycalderon@legaltec.cl,"11 Rest - Invocación a sistema externo",08-04-2021,17:36,19:55,1.4,,08-04-2021
+81271003,"Diagnóstico Vehicular  V3",ycalderon@legaltec.cl,"12 Rest - Pruebas del servicio en desarrollo",13-04-2021,18:56,20:37,1.7,,13-04-2021
+84311717,"Solicitudes Crawford",sistemasserviciosmc@gmail.com,"Informes de todos los usuarios que acceden al aplicativo Legaltec, Legaltec Servicios Inmobiliarios y Estudio Carvallo",23-04-2021,20:00,23:00,3,,24-04-2021
+82488548,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Web - Creación de Tablas y procedimientos para ejecucion de automatizaciones",17-04-2021,14:00,20:00,1.5,,18-04-2021
+80485635,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Cron- Búsqueda Carpeta",11-04-2021,19:00,20:00,1,,11-04-2021
+80485644,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Cron - Búsqueda Documentos",11-04-2021,20:00,21:00,1,,11-04-2021
+80485650,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Cron- Búsqueda Memo",11-04-2021,21:00,22:00,1,,11-04-2021
+80501307,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Cron- Carga escritura",12-04-2021,23:00,00:00,1,,12-04-2021
+81280272,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Web - Implementación de vueltas en fojas y números de inscripción",12-04-2021,21:30,22:30,1,,13-04-2021
+81280291,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Web - Implementación de vueltas en fojas y números de inscripción",13-04-2021,18:00,20:00,1.5,,13-04-2021
+81281139,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Ajustes robot descarga documentos (archivos sin extensión)",12-04-2021,18:00,21:30,3,,13-04-2021
+82488329,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Web -  Solicitud de ejecución de automatizaciones",16-04-2021,19:00,21:00,2,,18-04-2021
+82488377,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Web - Formulario de Solicitud de ejecución de automatizaciones",16-04-2021,21:00,23:00,2,,18-04-2021
+82489417,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Pruebas y Ajustes de desarrollo",18-04-2021,18:00,20:00,1.5,,18-04-2021
+82488640,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Web - Validaciones según cambio a realizado",17-04-2021,20:00,22:00,2,,18-04-2021
+82488654,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Análisis y diseño de flujo de Confeccionar Matriz",18-04-2021,22:00,00:00,2,,18-04-2021
+80486090,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Robot -  Periodicidad de ejecución o implementar interfaz on demand Robot para subir documento escritura al Worflow",10-04-2021,21:00,23:59,3,,11-04-2021
+82508030,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Pruebas y Ajustes de desarrollo",18-04-2021,21:00,23:00,2,,18-04-2021
+82922562,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Reprocesamiento de casos Sitio WEB",20-04-2021,19:00,00:00,5,,20-04-2021
+83307611,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Robot enviar a Subsanar Reparo Borrador",20-04-2021,19:00,23:00,4,,20-04-2021
+83534423,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Modificación Cargador Masivo Web",21-04-2021,23:00,03:00,4,,21-04-2021
+83641892,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Robot ""Confeccionar Borrador Rep."" a ""Confeccionar Matriz""",21-04-2021,18:30,23:30,5,,22-04-2021
+83641942,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Modificación Informe de estados",22-04-2021,23:30,00:30,1,,22-04-2021
+84312505,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Robot obtener datos de Reparos subsanados WF Banco",24-04-2021,16:00,21:00,2.5,,24-04-2021
+83949387,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Robot ""revisar matriz  ->  firma Banco""",22-04-2021,18:30,22:30,4,,22-04-2021
+80485431,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Robot- Búsqueda de carpetas a procesar",10-04-2021,17:00,21:00,2.5,,11-04-2021
+80485270,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Web- Opción cargador de solicitudes de carga de escrituras al WF",10-04-2021,23:00,00:00,1,,11-04-2021
+76313430,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Web - Validaciones Datos Crédito",27-03-2021,20:00,21:00,1,,28-03-2021
+76312487,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Web -  Carga datos crédito",27-03-2021,21:00,02:00,5,,28-03-2021
+76309141,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Robot -  Periodicidad de ejecución o implementar interfaz on demand Robot Descarga de todos los documentos",28-03-2021,18:00,20:00,1.5,,28-03-2021
+76310773,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Web - Diseño e implemetacion de modelo de datos",25-03-2021,19:00,20:00,1,,28-03-2021
+76311180,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Web - Login",25-03-2021,20:00,21:00,1,,28-03-2021
+76311225,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Web - Listado de Casos",25-03-2021,21:00,23:00,2,,28-03-2021
+76313750,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Web - Almacenar datos Personajes",28-03-2021,23:00,00:00,1,,28-03-2021
+76311242,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Web - Buscador lista",26-03-2021,23:00,00:00,1,,28-03-2021
+76312251,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Web - Manejo de Bloqueo de casos y control de tiempo en formulario",26-03-2021,16:00,20:00,1.5,,28-03-2021
+76313467,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Web - Carga Datos Personajes",27-03-2021,22:00,23:00,1,,28-03-2021
+76313458,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Web - Visualización y descarga documentos",27-03-2021,21:00,22:00,1,,28-03-2021
+80485195,"BCH FOGAPE",sistemasserviciosmc@gmail.com,"Robot para subir documento escritura al Worflow (py)",09-04-2021,19:00,23:00,4,,11-04-2021
+76109180,"BCH FOGAPE",rbarria@legaltec.cl,"WS - Creación de servicio para la creación de caso",27-03-2021,12:20,19:58,1.5,,27-03-2021
+75977836,"BCH FOGAPE",rbarria@legaltec.cl,"WS - Creación de procedimiento de creación de caso y inserción en cola de generación de documentos",25-03-2021,20:00,21:30,1.5,,26-03-2021
+83403337,"Prototipo Integración Legaltec-Monday",pdiazl@legaltec.cl,"Informe de horas extras mensuales",20-04-2021,15:00,22:00,3.5,,21-04-2021
+82862910,"MESA DE AYUDA",moteizav@legaltec.cl,"Accesos lilian buscadores, informes judiciales",15-04-2021,20:30,21:30,1,,19-04-2021
+82863157,"MESA DE AYUDA",moteizav@legaltec.cl,"Formulario 23",15-04-2021,21:40,23:40,2,,19-04-2021
+76329545,"BCH FOGAPE",ksandoval@legaltec.cl,"Web - Carga Datos Personajes",27-03-2021,20:00,22:00,2,,28-03-2021
+82488645,"BCH FOGAPE",ksandoval@legaltec.cl,"Web -  Solicitud de ejecución de automatizaciones",16-04-2021,20:00,23:00,3,,18-04-2021
+76329110,"BCH FOGAPE",ksandoval@legaltec.cl,"Web - Informe en excel de casos",28-03-2021,16:00,20:00,1.5,,28-03-2021
+76329179,"BCH FOGAPE",ksandoval@legaltec.cl,"Web - Pruebas y ajustes de desarrollo",28-03-2021,21:00,22:00,1,,28-03-2021
+83307573,"BCH FOGAPE",ksandoval@legaltec.cl,"Modificación Cargador Masivo",20-04-2021,21:00,23:00,2,,20-04-2021
+76330491,"BCH FOGAPE",ksandoval@legaltec.cl,"Pruebas integrales Desarrollo",27-03-2021,17:00,20:00,1.5,,28-03-2021
+80671697,"BCH FOGAPE",ksandoval@legaltec.cl,"Robot -  Análisis y diseño de flujo de carga de escritura",10-04-2021,20:00,23:00,3,,12-04-2021
+75919145,"BCH FOGAPE",ksandoval@legaltec.cl,"Análisis y generación de listado de actividades",24-03-2021,22:00,23:59,2,,26-03-2021
+75447291,"BCH FOGAPE",ksandoval@legaltec.cl,"Reunión inducción Proceso General",24-03-2021,18:00,19:40,1.2,,24-03-2021
+84311803,"Solicitudes Crawford",ksandoval@legaltec.cl,"Revisión y detalle de actividad",24-04-2021,20:00,22:00,2,,24-04-2021
+"id entrada",Proyecto,Usuario,Tarea,"Fecha Registro","Hora Inicio","Hora Fin","Horas extras","Horas fuera de periodo","Ultima actualizacion"

@@ -111,15 +111,15 @@ switch($requestMethod) {
 					$datadecoded = json_decode($logTime, true);
 					$aditionalValue = $datadecoded['additional_value'];
 
-					if(isset($_GET['ecl'])) {
+					// if(isset($_GET['ecl'])) {
 						//ECL code
-						$queryBuscaECL = getMondayData('{boards (ids: ' . $boardId . ') {items (ids: '. $itemId .' ) {id column_values(ids: "' . $colECL . '") {text}}}}');
-						$txtECL = getValuesByKey("text", $queryBuscaECL);
+					$queryBuscaECL = getMondayData('{boards (ids: ' . $boardId . ') {items (ids: '. $itemId .' ) {id column_values(ids: "' . $colECL . '") {text}}}}');
+					$txtECL = getValuesByKey("text", $queryBuscaECL);
 
-						if($txtECL == "ECL"){
-							$eclList[] = $itemId;
-						}
+					if($txtECL == "ECL"){
+						$eclList[] = $itemId;
 					}
+					// }
 					
 					
 					$startedAt = null;
@@ -155,37 +155,39 @@ switch($requestMethod) {
 
 						if($boolPeriod){
 							// Check period  of change
-							if(($dayFechRegistro >= 1) && ($dayFechRegistro <= 19) ){
+							if(($dayFechRegistro >= 1) && ($dayFechRegistro <= 24) ){
 								$monthStartedPeriod = date("m-Y", strtotime($fechaRegistro . "-1 months"));
 								$monthEndPeriod = date("m-Y", strtotime($fechaRegistro));
 							}
 
-							if(($dayFechRegistro >= 20) && ($dayFechRegistro <= 31)){
+							if(($dayFechRegistro >= 25) && ($dayFechRegistro <= 31)){
 								$monthStartedPeriod = date("m-Y", strtotime($fechaRegistro));
 								$monthEndPeriod  = date("m-Y", strtotime($fechaRegistro . "+1 months"));
 							} 				
 
-							$dateEndPeriod= '19-' . $monthEndPeriod; 
-							$dateStartedPeriod  = '20-' . $monthStartedPeriod; 
+							$dateEndPeriod= '24-' . $monthEndPeriod; 
+							$dateStartedPeriod  = '25-' . $monthStartedPeriod; 
 
 							// time registered out of period
 							$entryHoursOutPeriod = (strtotime($lastUpdate) >= strtotime($dateStartedPeriod)) && 
 												(strtotime($lastUpdate) <= strtotime($dateEndPeriod) ) ? false : true;
 	
 							$horasExtras = null;
-							$partialDuration = null;
+							$horaInicio = setTimeZoneTo($startedAt,1);
+							$horaFin = setTimeZoneTo($endedAt,1);
+							$partialDuration =getTimeDiff($horaInicio,$horaFin);
+							$horasDentroDeJornada = getTimeDiff($horaInicio,$finJornada);
+
 							if (setTimeZoneTo($startedAt,1) > $finJornada || setTimeZoneTo($endedAt,1) > $finJornada) {
-								$horaInicio = setTimeZoneTo($startedAt,1);
-								$horaFin = setTimeZoneTo($endedAt,1);
-								$partialDuration =getTimeDiff($horaInicio,$horaFin);
-		
 								if($horaInicio < $finJornada){
-									$horasDentroDeJornada = getTimeDiff($horaInicio,$finJornada);
 									$horasExtras = getTimeDiff($horasDentroDeJornada, $partialDuration );
 								} else {
 									$horasExtras = getTimeDiff( $horaInicio, $horaFin);
+									$horasDentroDeJornada = 0;
 								}
-							}
+							} else {
+								$horasDentroDeJornada = $partialDuration;
+							} 
 
 							// Get user email 
 							$startedUserId = $valueo['started_user_id'];
@@ -196,24 +198,25 @@ switch($requestMethod) {
 							}
 
 							 
-							if(decimalHours($horasExtras) > 0){
-								$activityList[] = array(
-									"boardId" => $boardId,
-									"itemId" => $itemId,
-									"entryId" => $entryId,
-									"nameBoard" => $nameBoard,
-									"userEmail" => $userEmail,
-									"itemName" => $itemName,
-									"date" => $fechaRegistro,
-									"startedAt" => $horaInicio,
-									"endedAt" => setTimeZoneTo($endedAt, 1),
-									"HorasExtras" => decimalHours($horasExtras),
-									"entryHourOutPeriod" => $entryHoursOutPeriod,
-									"updatedAt" => setTimeZoneTo($updatedAt,2),
-									"isECL" => "",
-									"link" => "https://legaltec-desarrollo.monday.com/boards/". $boardId . "/pulses/" . $itemId .""
-								);
-							} 
+							// if(decimalHours($horasExtras) > 0){
+							$activityList[] = array(
+								"boardId" => $boardId,
+								"itemId" => $itemId,
+								"entryId" => $entryId,
+								"nameBoard" => $nameBoard,
+								"userEmail" => $userEmail,
+								"itemName" => $itemName,
+								"date" => $fechaRegistro,
+								"startedAt" => $horaInicio,
+								"endedAt" => setTimeZoneTo($endedAt, 1),
+								"HorasJornada" => decimalHours($horasDentroDeJornada),
+								"HorasExtras" => decimalHours($horasExtras),
+								"entryHourOutPeriod" => $entryHoursOutPeriod,
+								"updatedAt" => setTimeZoneTo($updatedAt,2),
+								// "isECL" => "",
+								"link" => "https://legaltec-desarrollo.monday.com/boards/". $boardId . "/pulses/" . $itemId .""
+							);
+							// } 
 							
 						} 
 					}
@@ -229,7 +232,7 @@ switch($requestMethod) {
 			} 
 		}
 
-		uasort($activityList, function ($a, $b) { 
+		uasort($activityListECL, function ($a, $b) { 
 			return ( $a['userEmail'] < $b['userEmail'] ? 1 : -1 ); 
 		});
 
@@ -243,10 +246,10 @@ switch($requestMethod) {
 			"date" => "Fecha Registro",
 			"startedAt" => "Hora Inicio",
 			"endedAt" => "Hora Fin",
+			"HorasJornada" => "Hora jornada",
 			"HorasExtras" => "Horas extras",
 			"entryHourOutPeriod" => "Horas fuera de periodo",
 			"updatedAt" => "Ultima actualizacion",
-			"isECL" => "ECL",
 			"link" => ""
 		);
 		//$csvHeader = "IdEntrada,Proyecto,Usuario,Tarea,FechaRegistro,HoraInicio,HoraFin,Horasextras,HorasFueradePeriodo,UltimaActualizacion";
@@ -254,7 +257,7 @@ switch($requestMethod) {
 
 		$bodyHtml = "<html>";
     	$bodyHtml .= "<body>";
-    	$bodyHtml .= '<h1>Registro de horas extras</h1>';
+    	$bodyHtml .= '<h1>Registro de horas</h1>';
 		$bodyHtml .= '<p>Desde: ' . $startedPeriod . '</p>';
 		$bodyHtml .= '<p>Hasta: ' . $endPeriod . '</p>';
 		$bodyHtml .= '<p>Cantidad: ' . $cantHorasExtras . '</p>';
@@ -270,10 +273,10 @@ switch($requestMethod) {
 		// 			<th>FechaRegistro</th>
 		// 			<th>HoraInicio</th>
 		// 			<th>HoraFin</th>
+		// 			<th>Horas Jornada</th>
 		// 			<th>HorasExtras</th>
 		// 			<th>HorasFueradePeriodo</th>
 		// 			<th>UltimaActualizacion</th>
-		// 			<th>ECL</th>
 		// 			<th>link</th>
 		// 		</tr>";
 		// $bodyHtml .= displayResultsAsTable($activityList);
@@ -284,7 +287,7 @@ switch($requestMethod) {
 		//echo $bodyHtml;
  
 		
-
+		
 		$dir = '/var/www/html/ApiMonday/report/files/';
 		$filename = md5(date('Y-m-d H:i:s:u'));
 		$fp = fopen($dir . $filename .'.csv', 'w');
@@ -304,8 +307,8 @@ switch($requestMethod) {
 		$host = '8x.cl';
 		$port = 587;
 
-		$subject = 'Informe registro de horas extras';
-		$bodyText =  "Registro de horas extras\r\n";
+		$subject = 'Informe registro de horas';
+		$bodyText =  "Registro de horas\r\n";
 		$mail = new PHPMailer(true);
 
 		try {
@@ -340,6 +343,8 @@ switch($requestMethod) {
 			echo "Email not sent. {$mail->ErrorInfo}", PHP_EOL; //Catch errors from LEGALTEC API.
 			return false;
 		}
+		
+		
 		
 
         		 

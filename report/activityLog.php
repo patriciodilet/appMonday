@@ -1,12 +1,22 @@
 <?php
+header('Access-Control-Allow-Origin: *');
+header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+header('content-type: application/json; charset=utf-8');
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 require '../vendor/autoload.php';
 include('../class/multiSort.php');
+include('../helper/Functions.php');
+include('../helper/Email.php');
+
  
 $requestMethod = $_SERVER["REQUEST_METHOD"];
 switch($requestMethod) {
 	case 'GET':
+		//  send every 19 at 8 am 
+		// 0 8 19 * * curl http://3.211.203.97/ApiMonday/report/activityLog.php?period=1
 
 		//required** Get records by period of time ex:20-03 / 19-04    25-03/24-04 if ecl is set
 		$period = $_GET['period'];
@@ -48,21 +58,7 @@ switch($requestMethod) {
 			}
 			';
 
-		// $queryActivityLog2 = '{
-		// 	boards (ids:1185834313) {
-		// 		id
-		// 		name
-		// 		items {
-		// 		id
-		// 		name
-		// 		column_values(ids: "time_tracking") {
-		// 			text
-		// 			value
-		// 		}
-		// 		}
-		// 	}
-		// 	}
-		// 	';
+	 
 		$_queryActivityLog = getMondayData($queryActivityLog2);
 
 		$eclList[] = array();
@@ -221,11 +217,9 @@ switch($requestMethod) {
 			}
 		}
 
-		$activityListECL[] = null;
 		foreach ($activityList as $index => $val) {			 
 			if (in_array_multi($val['itemId'], $eclList)) {
 				$activityList[$index]["isECL"] = "ECL";
-				//$activityListECL[] = $val;
 			} 
 		}
 
@@ -249,7 +243,6 @@ switch($requestMethod) {
 			"isECL" => "ECL",
 			"link" => ""
 		);
-		//$csvHeader = "IdEntrada,Proyecto,Usuario,Tarea,FechaRegistro,HoraInicio,HoraFin,Horasextras,HorasFueradePeriodo,UltimaActualizacion";
 		$cantHorasExtras = count($activityList) - 1;
 
 		$bodyHtml = "<html>";
@@ -282,65 +275,12 @@ switch($requestMethod) {
 		$bodyHtml .= "</body></html>";
 
 		//echo $bodyHtml;
- 
-		
 
-		$dir = '/var/www/html/ApiMonday/report/files/';
-		$filename = md5(date('Y-m-d H:i:s:u'));
-		$fp = fopen($dir . $filename .'.csv', 'w');
-		foreach ($activityList as $fields) {
-			fputcsv($fp, $fields);
-		}
-		fclose($fp);
-
-
-		$attachment = $dir . $filename .'.csv';
-		$sender = 'test@8x.cl';
-		$senderName = 'Legaltec Monday';
-		 
-		$usernameSmtp = 'test@8x.cl';
-		$passwordSmtp = 'legaltec';
-		$configurationSet = 'ConfigSet';
-		$host = '8x.cl';
-		$port = 587;
-
-		$subject = 'Informe registro de horas extras';
-		$bodyText =  "Registro de horas extras\r\n";
-		$mail = new PHPMailer(true);
-
-		try {
-			$mail->isSMTP();
-			$mail->setFrom($sender, $senderName);
-			$mail->Username   = $usernameSmtp;
-			$mail->Password   = $passwordSmtp;
-			$mail->Host       = $host;
-			$mail->Port       = $port;
-			$mail->SMTPAuth   = true;
-			$mail->SMTPSecure = 'tls';
-			$mail->AddAttachment($attachment , 'Reporte Horas Extras ' . $startedPeriod . ' a ' . $endPeriod . '.csv');
-			 
-			$mail->addCustomHeader('X-SES-CONFIGURATION-SET', $configurationSet);
-			// $mail->addAddress('pdiazl@legaltec.cl');
-			$mail->addAddress('ksandoval@legaltec.cl');
-			// $mail->AddCC('pdiazl@legaltec.cl', 'Patricio Diaz');
-			// $mail->AddCC('ksandoval@legaltec.cl', 'Keyla Sandoval');
-			$mail->AddCC('mvenegas@legaltec.cl', 'Manuel Venegas');
-			$mail->isHTML(true);
-			$mail->Subject    = $subject;
-			$mail->Body       = $bodyHtml;
-			$mail->AltBody    = $bodyText;
-			$mail->CharSet    = 'UTF-8';
-			$mail->Send();
-			echo "Email sent!" , PHP_EOL;
-			return true;
-		} catch (phpmailerException $e) {
-			echo "An error occurred. {$e->errorMessage()}", PHP_EOL; //Catch errors from PHPMailer.
-			return false;
-		} catch (Exception $e) {
-			echo "Email not sent. {$mail->ErrorInfo}", PHP_EOL; //Catch errors from LEGALTEC API.
-			return false;
-		}
-		
+ 		$email = new Email();
+		$emailList = array("patricio.dilet@gmail.com");
+		// $emailList = array("ksandoval@legaltec.cl", "mvenegas@legaltec.cl");
+		$res = $email->sendEmail($emailList, $activityList, "Registro de horas extras", $bodyHtml);
+		echo $res;
 
         		 
 		break;
@@ -348,6 +288,7 @@ switch($requestMethod) {
 	header("HTTP/1.0 405 Method Not Allowed");
 	break;
 }
+
 
 function array_value_recursive($key, array $arr){
     $val = array();

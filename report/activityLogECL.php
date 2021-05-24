@@ -3,10 +3,14 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 require '../vendor/autoload.php';
 include('../class/multiSort.php');
+include('../helper/Email.php');
  
 $requestMethod = $_SERVER["REQUEST_METHOD"];
 switch($requestMethod) {
 	case 'GET':
+
+		// send every 26 at 8 am
+		// 0 8 26 * * curl http://3.211.203.97/ApiMonday/report/activityLogECL.php?period=1&ecl=1&startToday=1
 
 		//required** Get records by period of time ex:20-03 / 19-04    25-03/24-04 if ecl is set
 		$period = $_GET['period'];
@@ -48,21 +52,6 @@ switch($requestMethod) {
 			}
 			';
 
-		// $queryActivityLog2 = '{
-		// 	boards (ids:1185834313) {
-		// 		id
-		// 		name
-		// 		items {
-		// 		id
-		// 		name
-		// 		column_values(ids: "time_tracking") {
-		// 			text
-		// 			value
-		// 		}
-		// 		}
-		// 	}
-		// 	}
-		// 	';
 		$_queryActivityLog = getMondayData($queryActivityLog2);
 
 		$eclList[] = array();
@@ -111,15 +100,12 @@ switch($requestMethod) {
 					$datadecoded = json_decode($logTime, true);
 					$aditionalValue = $datadecoded['additional_value'];
 
-					// if(isset($_GET['ecl'])) {
-						//ECL code
 					$queryBuscaECL = getMondayData('{boards (ids: ' . $boardId . ') {items (ids: '. $itemId .' ) {id column_values(ids: "' . $colECL . '") {text}}}}');
 					$txtECL = getValuesByKey("text", $queryBuscaECL);
 
 					if($txtECL == "ECL"){
 						$eclList[] = $itemId;
 					}
-					// }
 					
 					
 					$startedAt = null;
@@ -138,9 +124,12 @@ switch($requestMethod) {
 						//Check period of time (1, 2, 3, etc..) 1 = 20/currentMonth to 19/currentMonth -1
 						$currentMonth = date('m-Y');
 						$startedCurrentMonth = date("m-Y", strtotime("-" . $period . " months"));
-						$endPeriod = isset($_GET["startToday"]) ? date('d-m-Y') : $endPeriod = '19-' . $currentMonth;
-						$startedPeriod = '20-' . $startedCurrentMonth; 
-						
+
+						$endMonth= date('m-Y', strtotime("+1 month", strtotime($startedPeriod)));
+
+						$endPeriod = '25-' . $endMonth;
+						$startedPeriod = '26-' . $startedCurrentMonth;
+
 						if (isset($_GET["daily"])){
 							$yesterday = date("d-m-Y", strtotime("-1 day"));
 							$endPeriod = $yesterday;
@@ -155,7 +144,7 @@ switch($requestMethod) {
 
 						if($boolPeriod){
 							// Check period  of change
-							if(($dayFechRegistro >= 1) && ($dayFechRegistro <= 24) ){
+							if(($dayFechRegistro >= 1) && ($dayFechRegistro <= 26) ){
 								$monthStartedPeriod = date("m-Y", strtotime($fechaRegistro . "-1 months"));
 								$monthEndPeriod = date("m-Y", strtotime($fechaRegistro));
 							}
@@ -165,8 +154,8 @@ switch($requestMethod) {
 								$monthEndPeriod  = date("m-Y", strtotime($fechaRegistro . "+1 months"));
 							} 				
 
-							$dateEndPeriod= '24-' . $monthEndPeriod; 
-							$dateStartedPeriod  = '25-' . $monthStartedPeriod; 
+							$dateEndPeriod= '25-' . $monthEndPeriod; 
+							$dateStartedPeriod  = '26-' . $monthStartedPeriod; 
 
 							// time registered out of period
 							$entryHoursOutPeriod = (strtotime($lastUpdate) >= strtotime($dateStartedPeriod)) && 
@@ -198,7 +187,6 @@ switch($requestMethod) {
 							}
 
 							 
-							// if(decimalHours($horasExtras) > 0){
 							$activityList[] = array(
 								"boardId" => $boardId,
 								"itemId" => $itemId,
@@ -213,11 +201,8 @@ switch($requestMethod) {
 								"HorasExtras" => decimalHours($horasExtras),
 								"entryHourOutPeriod" => $entryHoursOutPeriod,
 								"updatedAt" => setTimeZoneTo($updatedAt,2),
-								// "isECL" => "",
 								"link" => "https://legaltec-desarrollo.monday.com/boards/". $boardId . "/pulses/" . $itemId .""
-							);
-							// } 
-							
+							);							
 						} 
 					}
 				}
@@ -252,8 +237,7 @@ switch($requestMethod) {
 			"updatedAt" => "Ultima actualizacion",
 			"link" => ""
 		);
-		//$csvHeader = "IdEntrada,Proyecto,Usuario,Tarea,FechaRegistro,HoraInicio,HoraFin,Horasextras,HorasFueradePeriodo,UltimaActualizacion";
-		$cantHorasExtras = count($activityListECL) - 1;
+		$cantHorasExtras = count($activityListECL) - 2;
 
 		$bodyHtml = "<html>";
     	$bodyHtml .= "<body>";
@@ -262,91 +246,36 @@ switch($requestMethod) {
 		$bodyHtml .= '<p>Hasta: ' . $endPeriod . '</p>';
 		$bodyHtml .= '<p>Cantidad: ' . $cantHorasExtras . '</p>';
 
-		$bodyHtml .= '<table rules="all" style="border-color: #666; width:100%;" cellpadding="10">';
-		$bodyHtml .= "<tr style='background: #eee;'>
-					<th>boardId</th>
-					<th>itemId</th>
-					<th>IdEntrada</th>
-					<th>Proyecto</th>
-					<th>Usuario</th>
-					<th>Tarea</th>
-					<th>FechaRegistro</th>
-					<th>HoraInicio</th>
-					<th>HoraFin</th>
-					<th>Horas Jornada</th>
-					<th>HorasExtras</th>
-					<th>HorasFueradePeriodo</th>
-					<th>UltimaActualizacion</th>
-					<th>link</th>
-				</tr>";
-		$bodyHtml .= displayResultsAsTable($activityListECL);
-		$bodyHtml .= '</table>';
+		// $bodyHtml .= '<table rules="all" style="border-color: #666; width:100%;" cellpadding="10">';
+		// $bodyHtml .= "<tr style='background: #eee;'>
+		// 			<th>boardId</th>
+		// 			<th>itemId</th>
+		// 			<th>IdEntrada</th>
+		// 			<th>Proyecto</th>
+		// 			<th>Usuario</th>
+		// 			<th>Tarea</th>
+		// 			<th>FechaRegistro</th>
+		// 			<th>HoraInicio</th>
+		// 			<th>HoraFin</th>
+		// 			<th>Horas Jornada</th>
+		// 			<th>HorasExtras</th>
+		// 			<th>HorasFueradePeriodo</th>
+		// 			<th>UltimaActualizacion</th>
+		// 			<th>link</th>
+		// 		</tr>";
+		// $bodyHtml .= displayResultsAsTable($activityListECL);
+		// $bodyHtml .= '</table>';
 
 		$bodyHtml .= "</body></html>";
 
-		echo $bodyHtml;
- 
-		
-		
-		$dir = '/var/www/html/ApiMonday/report/files/';
-		$filename = md5(date('Y-m-d H:i:s:u'));
-		$fp = fopen($dir . $filename .'.csv', 'w');
-		foreach ($activityListECL as $fields) {
-			fputcsv($fp, $fields);
-		}
-		fclose($fp);
+		//echo $bodyHtml;
 
+		$email = new Email();
+		$emailList = array("patricio.dilet@gmail.com");
+		// $emailList = array("ksandoval@legaltec.cl", "mvenegas@legaltec.cl");
+		$res = $email->sendEmail($emailList, $activityListECL, "Registro de horas ECL", $bodyHtml);
+		echo $res;
 
-		$attachment = $dir . $filename .'.csv';
-		$sender = 'test@8x.cl';
-		$senderName = 'Legaltec Monday';
-		 
-		$usernameSmtp = 'test@8x.cl';
-		$passwordSmtp = 'legaltec';
-		$configurationSet = 'ConfigSet';
-		$host = '8x.cl';
-		$port = 587;
-
-		$subject = 'Informe registro de horas extras';
-		$bodyText =  "Registro de horas extras\r\n";
-		$mail = new PHPMailer(true);
-
-		try {
-			$mail->isSMTP();
-			$mail->setFrom($sender, $senderName);
-			$mail->Username   = $usernameSmtp;
-			$mail->Password   = $passwordSmtp;
-			$mail->Host       = $host;
-			$mail->Port       = $port;
-			$mail->SMTPAuth   = true;
-			$mail->SMTPSecure = 'tls';
-			$mail->AddAttachment($attachment , 'Reporte Horas Extras ' . $startedPeriod . ' a ' . $endPeriod . '.csv');
-			 
-			$mail->addCustomHeader('X-SES-CONFIGURATION-SET', $configurationSet);
-			// $mail->addAddress('pdiazl@legaltec.cl');
-			$mail->addAddress('ksandoval@legaltec.cl');
-			// $mail->AddCC('pdiazl@legaltec.cl', 'Patricio Diaz');
-			// $mail->AddCC('ksandoval@legaltec.cl', 'Keyla Sandoval');
-			$mail->AddCC('mvenegas@legaltec.cl', 'Manuel Venegas');
-			$mail->isHTML(true);
-			$mail->Subject    = $subject;
-			$mail->Body       = $bodyHtml;
-			$mail->AltBody    = $bodyText;
-			$mail->CharSet    = 'UTF-8';
-			$mail->Send();
-			echo "Email sent!" , PHP_EOL;
-			return true;
-		} catch (phpmailerException $e) {
-			echo "An error occurred. {$e->errorMessage()}", PHP_EOL; //Catch errors from PHPMailer.
-			return false;
-		} catch (Exception $e) {
-			echo "Email not sent. {$mail->ErrorInfo}", PHP_EOL; //Catch errors from LEGALTEC API.
-			return false;
-		}
-		
-		
-
-        		 
 		break;
 	default:
 	header("HTTP/1.0 405 Method Not Allowed");

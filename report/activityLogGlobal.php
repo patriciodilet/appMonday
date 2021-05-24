@@ -3,10 +3,15 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 require '../vendor/autoload.php';
 include('../class/multiSort.php');
+include('../helper/Email.php');
  
 $requestMethod = $_SERVER["REQUEST_METHOD"];
 switch($requestMethod) {
 	case 'GET':
+        
+		//http://3.211.203.97/ApiMonday/report/activityLogGlobal.php?period=1&startToday=1
+
+		
 
 		//required** Get records by period of time ex:20-03 / 19-04    25-03/24-04 if ecl is set
 		$period = $_GET['period'];
@@ -48,21 +53,7 @@ switch($requestMethod) {
 			}
 			';
 
-		// $queryActivityLog2 = '{
-		// 	boards (ids:1185834313) {
-		// 		id
-		// 		name
-		// 		items {
-		// 		id
-		// 		name
-		// 		column_values(ids: "time_tracking") {
-		// 			text
-		// 			value
-		// 		}
-		// 		}
-		// 	}
-		// 	}
-		// 	';
+		 
 		$_queryActivityLog = getMondayData($queryActivityLog2);
 
 		$eclList[] = array();
@@ -110,16 +101,14 @@ switch($requestMethod) {
 
 					$datadecoded = json_decode($logTime, true);
 					$aditionalValue = $datadecoded['additional_value'];
-
-					// if(isset($_GET['ecl'])) {
-						//ECL code
+ 
 					$queryBuscaECL = getMondayData('{boards (ids: ' . $boardId . ') {items (ids: '. $itemId .' ) {id column_values(ids: "' . $colECL . '") {text}}}}');
 					$txtECL = getValuesByKey("text", $queryBuscaECL);
 
 					if($txtECL == "ECL"){
 						$eclList[] = $itemId;
 					}
-					// }
+				 
 					
 					
 					$startedAt = null;
@@ -213,7 +202,6 @@ switch($requestMethod) {
 								"HorasExtras" => decimalHours($horasExtras),
 								"entryHourOutPeriod" => $entryHoursOutPeriod,
 								"updatedAt" => setTimeZoneTo($updatedAt,2),
-								// "isECL" => "",
 								"link" => "https://legaltec-desarrollo.monday.com/boards/". $boardId . "/pulses/" . $itemId .""
 							);
 							// } 
@@ -224,15 +212,14 @@ switch($requestMethod) {
 			}
 		}
 
-		$activityListECL[] = null;
+		 
 		foreach ($activityList as $index => $val) {			 
 			if (in_array_multi($val['itemId'], $eclList)) {
 				$activityList[$index]["isECL"] = "ECL";
-				//$activityListECL[] = $val;
 			} 
 		}
 
-		uasort($activityListECL, function ($a, $b) { 
+		uasort($activityList, function ($a, $b) { 
 			return ( $a['userEmail'] < $b['userEmail'] ? 1 : -1 ); 
 		});
 
@@ -252,7 +239,6 @@ switch($requestMethod) {
 			"updatedAt" => "Ultima actualizacion",
 			"link" => ""
 		);
-		//$csvHeader = "IdEntrada,Proyecto,Usuario,Tarea,FechaRegistro,HoraInicio,HoraFin,Horasextras,HorasFueradePeriodo,UltimaActualizacion";
 		$cantHorasExtras = count($activityList) - 1;
 
 		$bodyHtml = "<html>";
@@ -284,68 +270,14 @@ switch($requestMethod) {
 
 		$bodyHtml .= "</body></html>";
 
-		//echo $bodyHtml;
+		echo $bodyHtml;
  
-		
-		
-		$dir = '/var/www/html/ApiMonday/report/files/';
-		$filename = md5(date('Y-m-d H:i:s:u'));
-		$fp = fopen($dir . $filename .'.csv', 'w');
-		foreach ($activityList as $fields) {
-			fputcsv($fp, $fields);
-		}
-		fclose($fp);
+		$email = new Email();
+		$emailList = array("patricio.dilet@gmail.com");
+		// $emailList = array("ksandoval@legaltec.cl", "mvenegas@legaltec.cl");
+		$res = $email->sendEmail($emailList, $activityList, "Registro de horas", $bodyHtml);
+		echo $res;
 
-
-		$attachment = $dir . $filename .'.csv';
-		$sender = 'test@8x.cl';
-		$senderName = 'Legaltec Monday';
-		 
-		$usernameSmtp = 'test@8x.cl';
-		$passwordSmtp = 'legaltec';
-		$configurationSet = 'ConfigSet';
-		$host = '8x.cl';
-		$port = 587;
-
-		$subject = 'Informe registro de horas';
-		$bodyText =  "Registro de horas\r\n";
-		$mail = new PHPMailer(true);
-
-		try {
-			$mail->isSMTP();
-			$mail->setFrom($sender, $senderName);
-			$mail->Username   = $usernameSmtp;
-			$mail->Password   = $passwordSmtp;
-			$mail->Host       = $host;
-			$mail->Port       = $port;
-			$mail->SMTPAuth   = true;
-			$mail->SMTPSecure = 'tls';
-			$mail->AddAttachment($attachment , 'Reporte Horas Extras ' . $startedPeriod . ' a ' . $endPeriod . '.csv');
-			 
-			$mail->addCustomHeader('X-SES-CONFIGURATION-SET', $configurationSet);
-			// $mail->addAddress('pdiazl@legaltec.cl');
-			$mail->addAddress('ksandoval@legaltec.cl');
-			// $mail->AddCC('pdiazl@legaltec.cl', 'Patricio Diaz');
-			// $mail->AddCC('ksandoval@legaltec.cl', 'Keyla Sandoval');
-			$mail->AddCC('mvenegas@legaltec.cl', 'Manuel Venegas');
-			$mail->isHTML(true);
-			$mail->Subject    = $subject;
-			$mail->Body       = $bodyHtml;
-			$mail->AltBody    = $bodyText;
-			$mail->CharSet    = 'UTF-8';
-			$mail->Send();
-			echo "Email sent!" , PHP_EOL;
-			return true;
-		} catch (phpmailerException $e) {
-			echo "An error occurred. {$e->errorMessage()}", PHP_EOL; //Catch errors from PHPMailer.
-			return false;
-		} catch (Exception $e) {
-			echo "Email not sent. {$mail->ErrorInfo}", PHP_EOL; //Catch errors from LEGALTEC API.
-			return false;
-		}
-		
-		
-		
 
         		 
 		break;

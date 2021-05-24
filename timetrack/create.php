@@ -95,7 +95,6 @@ switch($requestMethod) {
 		}
 	 
 		if($timeTracking["running"] === 'false'){
-		 
 			$timetrack->setBoardId(reset($boardId));
 			$timetrack->setItemId(reset($itemId));
 			$timetrack->setUserId(reset($userId));
@@ -111,6 +110,10 @@ switch($requestMethod) {
 			$timetrack->setCreatorIdPost($creatorIdPost);
 			$timetrack->setPostText($postText); 
 			$timetrack->setNameBoard($nameBoard); 
+
+			$now = date('d-m-Y');
+			$isHolyday = checkHoliday($now);
+			$timetrack->setIsHoliday($isHolyday); 
 			$timetrackInfo = $timetrack->createTimetrack();
 
 			if(!empty($timetrackInfo)) {
@@ -128,6 +131,52 @@ switch($requestMethod) {
 	break;
 }
  
+function checkHoliday($date){
+	if(date('l', strtotime($date)) == 'Saturday'){
+		return false;
+	//   return "Saturday";
+	}else if(date('l', strtotime($date)) == 'Sunday'){
+		return true;
+	//   return "Sunday";
+	}else{
+	  $receivedDate = date('d M', strtotime($date));
+  
+	  $holiday = array(
+		'01 Jan' => 'New Year Day',
+		'02 Apr' => 'Viernes Santo',
+		'03 Apr' => 'Sabado Santo',
+		'01 May' => 'Dia del Trabajador',
+		'15 May' => 'Eleccion Alcaldes',
+		'16 May' => 'Eleccion Alcaldes',
+		'13 Jun' => 'Segunda Vuelta Gobernadores Regionales',
+		'28 Jun' => 'San Pedro y San Pablo',
+		'16 Jul' => 'Dia de la Virgen del Carmen',
+		'18 Jul' => 'Elecciones Primarias Presidenciales',
+		'15 Ago' => 'Asuncion de la Virgen', 
+		'17 Sep' => 'Feriado Adicional',
+		'18 Sep' => 'Independencia Nacional',
+		'19 Sep' => 'Dia de las Glorias del Ejercito',
+		'11 Oct' => 'Dia de la Raza',
+		'31 Oct' => 'Dia de las Iglesias Evangélicas', 
+		'01 Nov' => 'Dia de Todos los Santos',
+		'21 Nov' => 'Elecciones Presidenciales y Parlamentarias',
+		'08 Dec' => 'Inmaculada Concepcion',
+		'19 Dec' => 'Segunda Vuelta Elecciones Presidenciales',
+		'25 Dec' => 'Navidad',
+		'31 Dec' => 'Feriado Bancario'
+	  );
+  
+	  foreach($holiday as $key => $value){
+		if($receivedDate == $key){
+			return true;
+		//   return $value;
+		}
+	  }
+	}
+  }
+
+
+
 /**
 * Get all values from specific key in a multidimensional array
 *

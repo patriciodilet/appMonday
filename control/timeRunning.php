@@ -3,10 +3,16 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 require '../vendor/autoload.php';
 include('../class/multiSort.php');
+include('../helper/Email.php');
+
  
 $requestMethod = $_SERVER["REQUEST_METHOD"];
 switch($requestMethod) {
 	case 'GET':
+		// Check running time every 10 minutes
+		// #*/10 * * * 1-5 curl http://3.211.203.97/ApiMonday/control/timeRunning.php
+		// http://3.211.203.97/ApiMonday/control/timeRunning.php
+
 		$queryGetIdByEmail = '
 		{
 		  users {
@@ -27,7 +33,7 @@ switch($requestMethod) {
 			  }';
 
 		$_queryActivityLog = getMondayData($queryActivityLog2);
-
+		$email = new Email();
 		$itemsRunning[] = array();
 		foreach (reset($_queryActivityLog) as $key => $data) {
 			foreach ($data as $f_key => $f_val) {
@@ -69,7 +75,15 @@ switch($requestMethod) {
 						}
 						$itemUrl = "https://legaltec-desarrollo.monday.com/boards/1104694287/pulses/" . $itemId ."";//boardId base
 
-						$emailAviso = sendEmail($userEmail, $itemUrl);
+						$bodyHtml = "<html>";
+						$bodyHtml .= "<body>";
+						$bodyHtml .= '<h3>Aviso de tiempo corriendo</h3>';
+						$bodyHtml .= '<p>¿Sigues trabajando en éste ítem? Tu tiempo está corriendo <a href="' . $itemUrl . '">aquí</a></p>';
+						$bodyHtml .= "</body></html>";
+						$emailAviso = $email->sendEmail($userEmail , "", "Aviso de tiempo corriendo", $bodyHtml);
+						echo $emailAviso;
+
+						//$emailAviso = sendEmail($userEmail, $itemUrl);
 						$itemsRunning[] = array(
 							"boardId" => $boardId,
 							"itemId" => $itemId,
@@ -77,7 +91,7 @@ switch($requestMethod) {
 							"actualDate" => $actualDate,
 							"currentTime" => $currentTime,
 							"email" => $userEmail,
-							"emailAviso" => $emailAviso
+							"emailAviso" => 1
 						);
 					}
 				} 
@@ -95,61 +109,7 @@ switch($requestMethod) {
 	break;
 }
 
-function sendEmail($from, $itemUrl){
-	 
-	$bodyHtml = "<html>";
-	$bodyHtml .= "<body>";
-	$bodyHtml .= '<h3>Aviso de tiempo corriendo</h3>';
-	$bodyHtml .= '<p>Tiempo corriendo <a href="' . $itemUrl . '">aquí</a></p>';
-	
-	$bodyHtml .= "</body></html>";
-
-	$sender = 'test@8x.cl';
-	$senderName = 'Legaltec Monday';
-		
-	$usernameSmtp = 'test@8x.cl';
-	$passwordSmtp = 'legaltec';
-	$configurationSet = 'ConfigSet';
-	$host = '8x.cl';
-	$port = 587;
-
-	$subject = 'Aviso de tiempo corriendo';
-	$bodyText =  "Aviso de tiempo corriendo\r\n";
-	$mail = new PHPMailer(true);
-
-	try {
-		$mail->isSMTP();
-		$mail->setFrom($sender, $senderName);
-		$mail->Username   = $usernameSmtp;
-		$mail->Password   = $passwordSmtp;
-		$mail->Host       = $host;
-		$mail->Port       = $port;
-		$mail->SMTPAuth   = true;
-		$mail->SMTPSecure = 'tls';
-		//$mail->AddAttachment($attachment , 'Reporte Horas Extras ' . $startedPeriod . ' a ' . $endPeriod . '.csv');
-			
-		$mail->addCustomHeader('X-SES-CONFIGURATION-SET', $configurationSet);
-		$mail->addAddress($from);
-		//$mail->addAddress('ksandoval@legaltec.cl');
-		// $mail->AddCC('pdiazl@legaltec.cl', 'Patricio Diaz');
-		// $mail->AddCC('ksandoval@legaltec.cl', 'Keyla Sandoval');
-		//$mail->AddCC('mvenegas@legaltec.cl', 'Manuel Venegas');
-		$mail->isHTML(true);
-		$mail->Subject    = $subject;
-		$mail->Body       = $bodyHtml;
-		$mail->AltBody    = $bodyText;
-		$mail->CharSet    = 'UTF-8';
-		$mail->Send();
-		//echo "Email sent!" , PHP_EOL;
-		return true;
-	} catch (phpmailerException $e) {
-		//echo "An error occurred. {$e->errorMessage()}", PHP_EOL; //Catch errors from PHPMailer.
-		return false;
-	} catch (Exception $e) {
-		//echo "Email not sent. {$mail->ErrorInfo}", PHP_EOL; //Catch errors from LEGALTEC API.
-		return false;
-	}
-}
+ 
 
 function array_value_recursive($key, array $arr){
     $val = array();

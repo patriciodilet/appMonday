@@ -26,6 +26,7 @@ class Timetrack
 	private $_creatorIdResponse;
 	private $_creatorIdPost;
     private $_nameBoard;
+    private $_isHolyday;
 
     public function setTimeTrackID($timetrackID) {
         $this->_timetrackID = $timetrackID;
@@ -88,6 +89,10 @@ class Timetrack
 	public function setNameBoard($nameBoard) {
         $this->_nameBoard = $nameBoard;
     }
+
+	public function setIsHoliday($isHolyday) {
+        $this->_isHolyday = $isHolyday;
+    }
 	
 	public function setDate(){
 		$this->_date = date("d-m-Y");
@@ -101,7 +106,8 @@ class Timetrack
     // create Timetrack
     public function createTimetrack() {
 		try {
-    		$sql = 'INSERT INTO MondayGestionDiaria (boardId, itemId, userId, userEmail, TPP, itemName, duration, milestone, date, postText, responseText, lastResponseId, creatorIdResponse, creatorIdPost, nameBoard)  VALUES (:boardId, :itemId, :userId, :userEmail, :TPP, :itemName, :duration, :milestone, :date, :postText, :responseText, :lastResponseId, :creatorIdResponse, :creatorIdPost, :nameBoard)';
+    		// $sql = 'INSERT INTO MondayGestionDiaria (boardId, itemId, userId, userEmail, TPP, itemName, duration, milestone, date, postText, responseText, lastResponseId, creatorIdResponse, creatorIdPost, nameBoard, isHolyDay)  VALUES (:boardId, :itemId, :userId, :userEmail, :TPP, :itemName, :duration, :milestone, :date, :postText, :responseText, :lastResponseId, :creatorIdResponse, :creatorIdPost, :nameBoard, :isHolyDay)';
+    		$sql = 'INSERT INTO MondayGestionDiaria (boardId, itemId, userId, userEmail, TPP, itemName, duration, milestone, date, postText, responseText, lastResponseId, creatorIdResponse, creatorIdPost, nameBoard, isHolyday)  VALUES (:boardId, :itemId, :userId, :userEmail, :TPP, :itemName, :duration, :milestone, :date, :postText, :responseText, :lastResponseId, :creatorIdResponse, :creatorIdPost, :nameBoard, :isHolyday)';
     		$data = [
 			    'boardId' => $this->_boardId,
 			    'itemId' => $this->_itemId,
@@ -117,7 +123,8 @@ class Timetrack
 			    'lastResponseId' => $this->_lastResponseId,
 			    'creatorIdResponse' => $this->_creatorIdResponse,
 			    'creatorIdPost' => $this->_creatorIdPost,
-			    'nameBoard' => $this->_nameBoard 
+			    'nameBoard' => $this->_nameBoard,
+			    'isHolyday' => $this->_isHolyday
 			];
 	    	$stmt = $this->db->prepare($sql);
 	    	$stmt->execute($data);
@@ -192,7 +199,51 @@ class Timetrack
 		    die("There's an error in the query!");
 		}
     }
-
+/*
+	function checkHoliday($date){
+        if(date('l', strtotime($date)) == 'Saturday'){
+            return false;
+        //   return "Saturday";
+        }else if(date('l', strtotime($date)) == 'Sunday'){
+            return true;
+        //   return "Sunday";
+        }else{
+          $receivedDate = date('d M', strtotime($date));
+      
+          $holiday = array(
+            '01 Jan' => 'New Year Day',
+            '02 Apr' => 'Viernes Santo',
+            '03 Apr' => 'Sabado Santo',
+            '01 May' => 'Dia del Trabajador',
+            '15 May' => 'Eleccion Alcaldes',
+            '16 May' => 'Eleccion Alcaldes',
+            '13 Jun' => 'Segunda Vuelta Gobernadores Regionales',
+            '28 Jun' => 'San Pedro y San Pablo',
+            '16 Jul' => 'Dia de la Virgen del Carmen',
+            '18 Jul' => 'Elecciones Primarias Presidenciales',
+            '15 Ago' => 'Asuncion de la Virgen', 
+            '17 Sep' => 'Feriado Adicional',
+            '18 Sep' => 'Independencia Nacional',
+            '19 Sep' => 'Dia de las Glorias del Ejercito',
+            '11 Oct' => 'Dia de la Raza',
+            '31 Oct' => 'Dia de las Iglesias Evangélicas', 
+            '01 Nov' => 'Dia de Todos los Santos',
+            '21 Nov' => 'Elecciones Presidenciales y Parlamentarias',
+            '08 Dec' => 'Inmaculada Concepcion',
+            '19 Dec' => 'Segunda Vuelta Elecciones Presidenciales',
+            '25 Dec' => 'Navidad',
+            '31 Dec' => 'Feriado Bancario'
+          );
+      
+          foreach($holiday as $key => $value){
+            if($receivedDate == $key){
+                return true;
+            //   return $value;
+            }
+          }
+        }
+      }
+*/
 
 }
 ?>

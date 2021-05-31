@@ -56,7 +56,7 @@ include("DBConnection.php");
             select distinct T2.userEmail
             from MondayGestionDiaria.MondayGestionDiaria T2
             where T2.date = DATE_FORMAT(subdate(curdate(), 2), '%d-%m-%Y')
-            )
+            ) AND T1.isActive = 1
             UNION
             select distinct T2.userEmail
             from MondayGestionDiaria.MondayGestionDiaria T2

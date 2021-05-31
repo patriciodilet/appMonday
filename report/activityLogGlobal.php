@@ -144,18 +144,18 @@ switch($requestMethod) {
 
 						if($boolPeriod){
 							// Check period  of change
-							if(($dayFechRegistro >= 1) && ($dayFechRegistro <= 24) ){
+							if(($dayFechRegistro >= 1) && ($dayFechRegistro <= 19) ){
 								$monthStartedPeriod = date("m-Y", strtotime($fechaRegistro . "-1 months"));
 								$monthEndPeriod = date("m-Y", strtotime($fechaRegistro));
 							}
 
-							if(($dayFechRegistro >= 25) && ($dayFechRegistro <= 31)){
+							if(($dayFechRegistro >= 20) && ($dayFechRegistro <= 31)){
 								$monthStartedPeriod = date("m-Y", strtotime($fechaRegistro));
 								$monthEndPeriod  = date("m-Y", strtotime($fechaRegistro . "+1 months"));
 							} 				
 
-							$dateEndPeriod= '24-' . $monthEndPeriod; 
-							$dateStartedPeriod  = '25-' . $monthStartedPeriod; 
+							$dateEndPeriod= '19-' . $monthEndPeriod; 
+							$dateStartedPeriod  = '20-' . $monthStartedPeriod; 
 
 							// time registered out of period
 							$entryHoursOutPeriod = (strtotime($lastUpdate) >= strtotime($dateStartedPeriod)) && 
@@ -223,22 +223,22 @@ switch($requestMethod) {
 			return ( $a['userEmail'] < $b['userEmail'] ? 1 : -1 ); 
 		});
 
-		$activityList[] = array(
-			"boardId" => "boardId",
-			"itemId" => "itemId",
-			"entryId" => "id entrada",
-			"nameBoard" => "Proyecto",
-			"userEmail" => "Usuario",
-			"itemName" => "Tarea",
-			"date" => "Fecha Registro",
-			"startedAt" => "Hora Inicio",
-			"endedAt" => "Hora Fin",
-			"HorasJornada" => "Hora jornada",
-			"HorasExtras" => "Horas extras",
-			"entryHourOutPeriod" => "Horas fuera de periodo",
-			"updatedAt" => "Ultima actualizacion",
-			"link" => ""
-		);
+		$headers =[
+			"boardId",
+			"itemId",
+			"entryId",
+			"nameBoard",
+			"userEmail",
+			"itemName",
+			"date",
+			"startedAt",
+			"endedAt",
+			"HorasExtras",
+			"entryHourOutPeriod",
+			"updatedAt",
+			"isECL",
+			"link"];
+
 		$cantHorasExtras = count($activityList) - 1;
 
 		$bodyHtml = "<html>";
@@ -273,10 +273,10 @@ switch($requestMethod) {
 		echo $bodyHtml;
  
 		$email = new Email();
-		$emailList = array("patricio.dilet@gmail.com");
-		// $emailList = array("ksandoval@legaltec.cl", "mvenegas@legaltec.cl");
-		$res = $email->sendEmail($emailList, $activityList, "Registro de horas", $bodyHtml);
-		echo $res;
+		$to = array("mvenegas@legaltec.cl");
+		$cc = array("pdiazl@legaltec.cl");
+		// $cc = array("ksandoval@legaltec.cl");
+		$res = $email->sendEmail($to, $cc, $headers, $activityListECL, "Registro de horas", $bodyHtml);
 
 
         		 

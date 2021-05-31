@@ -227,22 +227,21 @@ switch($requestMethod) {
 			return ( $a['userEmail'] < $b['userEmail'] ? 1 : -1 ); 
 		});
 
-		$activityList[] = array(
-			"boardId" => "boardId",
-			"itemId" => "itemId",
-			"entryId" => "id entrada",
-			"nameBoard" => "Proyecto",
-			"userEmail" => "Usuario",
-			"itemName" => "Tarea",
-			"date" => "Fecha Registro",
-			"startedAt" => "Hora Inicio",
-			"endedAt" => "Hora Fin",
-			"HorasExtras" => "Horas extras",
-			"entryHourOutPeriod" => "Horas fuera de periodo",
-			"updatedAt" => "Ultima actualizacion",
-			"isECL" => "ECL",
-			"link" => ""
-		);
+		$headers =[
+			"boardId",
+			"itemId",
+			"entryId",
+			"nameBoard",
+			"userEmail",
+			"itemName",
+			"date",
+			"startedAt",
+			"endedAt",
+			"HorasExtras",
+			"entryHourOutPeriod",
+			"updatedAt",
+			"isECL",
+			"link"];
 		$cantHorasExtras = count($activityList) - 1;
 
 		$bodyHtml = "<html>";
@@ -273,13 +272,13 @@ switch($requestMethod) {
 		// $bodyHtml .= '</table>';
 
 		$bodyHtml .= "</body></html>";
-
 		//echo $bodyHtml;
 
- 		$email = new Email();
-		$emailList = array("patricio.dilet@gmail.com");
-		// $emailList = array("ksandoval@legaltec.cl", "mvenegas@legaltec.cl");
-		$res = $email->sendEmail($emailList, $activityList, "Registro de horas extras", $bodyHtml);
+		$email = new Email();
+		$to = array("mvenegas@legaltec.cl");
+		$cc = array("ksandoval@legaltec.cl", "pdiazl@legaltec.cl");
+		$res = $email->sendEmail($to, $cc, $headers, $activityList, "Registro de horas extras", $bodyHtml);
+ 
 		echo $res;
 
         		 

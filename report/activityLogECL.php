@@ -124,11 +124,9 @@ switch($requestMethod) {
 						//Check period of time (1, 2, 3, etc..) 1 = 20/currentMonth to 19/currentMonth -1
 						$currentMonth = date('m-Y');
 						$startedCurrentMonth = date("m-Y", strtotime("-" . $period . " months"));
-
-						$endMonth= date('m-Y', strtotime("+1 month", strtotime($startedPeriod)));
-
-						$endPeriod = '25-' . $endMonth;
 						$startedPeriod = '26-' . $startedCurrentMonth;
+						$endMonth= date('m-Y', strtotime("+" . $period . " month", strtotime($startedPeriod)));
+						$endPeriod = '25-' . $endMonth;
 
 						if (isset($_GET["daily"])){
 							$yesterday = date("d-m-Y", strtotime("-1 day"));
@@ -221,22 +219,22 @@ switch($requestMethod) {
 			return ( $a['userEmail'] < $b['userEmail'] ? 1 : -1 ); 
 		});
 
-		$activityListECL[] = array(
-			"boardId" => "boardId",
-			"itemId" => "itemId",
-			"entryId" => "id entrada",
-			"nameBoard" => "Proyecto",
-			"userEmail" => "Usuario",
-			"itemName" => "Tarea",
-			"date" => "Fecha Registro",
-			"startedAt" => "Hora Inicio",
-			"endedAt" => "Hora Fin",
-			"HorasJornada" => "Hora jornada",
-			"HorasExtras" => "Horas extras",
-			"entryHourOutPeriod" => "Horas fuera de periodo",
-			"updatedAt" => "Ultima actualizacion",
-			"link" => ""
-		);
+	 
+		$headers =[
+			"boardId",
+			"itemId",
+			"entryId",
+			"nameBoard",
+			"userEmail",
+			"itemName",
+			"date",
+			"startedAt",
+			"endedAt",
+			"HorasExtras",
+			"entryHourOutPeriod",
+			"updatedAt",
+			"link"];
+
 		$cantHorasExtras = count($activityListECL) - 2;
 
 		$bodyHtml = "<html>";
@@ -268,12 +266,12 @@ switch($requestMethod) {
 
 		$bodyHtml .= "</body></html>";
 
-		//echo $bodyHtml;
+	//	echo $bodyHtml;
 
 		$email = new Email();
-		$emailList = array("patricio.dilet@gmail.com");
-		// $emailList = array("ksandoval@legaltec.cl", "mvenegas@legaltec.cl");
-		$res = $email->sendEmail($emailList, $activityListECL, "Registro de horas ECL", $bodyHtml);
+		$cc = array("patricio.dilet@gmail.com");
+		$to = array("mvenegas@legaltec.cl", "ksandoval@legaltec.cl");
+		$res = $email->sendEmail($to, $cc, $headers, $activityListECL, "Registro de horas ECL", $bodyHtml);
 		echo $res;
 
 		break;

@@ -61,8 +61,8 @@ switch($requestMethod) {
 										->format("d-m-Y H:i:s");
 
 					$currentTime = RestarHoras($startDate, $actualDate);
-					$maxTimeRunning = date('H:i:s', strtotime('05:00:00'));
-				   if($currentTime > $maxTimeRunning){
+					$maxTimeRunning = date('H:i:s', strtotime('00:00:10'));
+				    if($currentTime > $maxTimeRunning){
 						$userEmail = null;
 						foreach ($aditionalValue as $g_key => $g_value){
 							$startedUserId = $g_value['started_user_id'];
@@ -80,10 +80,9 @@ switch($requestMethod) {
 						$bodyHtml .= '<h3>Aviso de tiempo corriendo</h3>';
 						$bodyHtml .= '<p>¿Sigues trabajando en éste ítem? Tu tiempo está corriendo <a href="' . $itemUrl . '">aquí</a></p>';
 						$bodyHtml .= "</body></html>";
-						$emailAviso = $email->sendEmail($userEmail , "", "Aviso de tiempo corriendo", $bodyHtml);
-						echo $emailAviso;
 
-						//$emailAviso = sendEmail($userEmail, $itemUrl);
+		                $cc = array("ksandoval@legaltec.cl", "mvenegas@legaltec.cl", "pdiazl@legaltec.cl");
+		                $emailAviso = $email->sendEmail($userEmail, $cc, "", "", "Aviso de tiempo corriendo", $bodyHtml);
 						$itemsRunning[] = array(
 							"boardId" => $boardId,
 							"itemId" => $itemId,
@@ -99,10 +98,7 @@ switch($requestMethod) {
 		}
 
 
-	//	print_r($itemsRunning);
-		  
-
-        		 
+		 
 		break;
 	default:
 	header("HTTP/1.0 405 Method Not Allowed");

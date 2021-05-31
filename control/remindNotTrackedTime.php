@@ -27,8 +27,11 @@ switch($requestMethod) {
 
 			foreach ($userList as $key => $value) {
 			    $email = new Email();
-				$cc = array("ksandoval@legaltec.cl", "mvenegas@legaltec.cl", "pdiazl@legaltec.cl");
-				$res = $email->sendEmail($value['userEmail'], $cc, "", "", "Aviso de no registro de tiempo", $bodyHtml);
+				// $cc = array("ksandoval@legaltec.cl", "mvenegas@legaltec.cl", "pdiazl@legaltec.cl");
+				// $res = $email->sendEmail($value['userEmail'], $cc, "", "", "Aviso de no registro de tiempo", $bodyHtml);
+				$bodyHtml .= $value['userEmail'];
+				$res = $email->sendEmail("patricio.dilet@gmail.com", $cc, "", "", "Aviso de no registro de tiempo", $bodyHtml);
+				
 			}
         } else {
             $js_encode = json_encode(array('status'=>FALSE, 'message'=>'There is no record yet.'), true);

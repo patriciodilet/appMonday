@@ -169,12 +169,87 @@ class Functions {
             }
           }
         }
-      }
+    }
 
+
+
+	public static function getValuesByKey($key, array $arr){
+		$val = array();
+		array_walk_recursive($arr, function($v, $k) use($key, &$val){
+			if($k == $key) array_push($val, $v);
+		});
+		return count($val) > 1 ? $val : array_pop($val);
+	}
+
+	public static function getTimeDiff($dtime,$atime)
+    {
+        $nextDay = $dtime>$atime?1:0;
+        $dep = explode(':',$dtime);
+        $arr = explode(':',$atime);
+        $diff = abs(mktime($dep[0],$dep[1],0,date('n'),date('j'),date('y'))-mktime($arr[0],$arr[1],0,date('n'),date('j')+$nextDay,date('y')));
+        $hours = floor($diff/(60*60));
+        $mins = floor(($diff-($hours*60*60))/(60));
+        $secs = floor(($diff-(($hours*60*60)+($mins*60))));
+        if(strlen($hours)<2){$hours="0".$hours;}
+        if(strlen($mins)<2){$mins="0".$mins;}
+        if(strlen($secs)<2){$secs="0".$secs;}
+        return $hours.':'.$mins.':'.$secs;
+    }
+
+	public static function setTimeZoneTo($dateToChange, $format){
+		$original_timezone = new DateTimeZone('UTC');
+		$datetime = new DateTime($dateToChange, $original_timezone);
+		$target_timezone = new DateTimeZone('America/Santiago');
+		$datetime->setTimeZone($target_timezone);
 	
+		switch($format) {
+			case 1:
+				return $datetime->format('H:i');
+				break;
+			case 2:
+				return $datetime->format('d-m-Y');
+				break;
+			case 3:
+				return $datetime->format('d-m-Y H:i:s');
+				break;
+			case 4:
+				return $datetime->format('m');
+				break;
+			case 5:
+				return $datetime->format('m-y');
+				break;
+			default:
+				break;
+			}
+	}
+
+	public static function decimalHours($time)
+    {
+        $hms = explode(":", $time);
+	    $hours = ($hms[0] + ($hms[1]/60) + ($hms[2]/3600));
+	
+        return round($hours, 1, PHP_ROUND_HALF_EVEN);
+    }
+
+	public static function in_array_multi($needle, $haystack) {
+		foreach ($haystack as $item) {
+			if ($item === $needle || (is_array($item) & in_array_multi($needle, $item))) {
+				return true;
+			}
+		}
+	 
+		return false;
+	}	
+
+	public static function RestarHoras($horaini,$horafin)
+    {
+        $f1 = new DateTime($horaini);
+        $f2 = new DateTime($horafin);
+        $d = $f1->diff($f2);
+        return $d->format('%H:%I:%S');
+    }
 
 }
 
-// var_dump(Functions::contarDiasNoHabiles('01/01/2017', '31/12/2017'));
 
 ?>

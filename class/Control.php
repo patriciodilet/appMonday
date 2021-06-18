@@ -7,10 +7,10 @@
  * @email  pdiazl@legaltec.cl
  *   
  */
-include("DBConnection.php");
- class Control
+ include_once ("DBConnection.php");
+ class Control extends DBConnection
  {
-    protected $db;
+    // protected $db;
 	private $_userId;
 	private $_userEmail;
 
@@ -27,7 +27,7 @@ include("DBConnection.php");
         $this->db = new DBConnection();
         $this->db = $this->db->returnConnection();
     }
-     
+   
     // update Timetrack
     public function upsertUser() {
         try {

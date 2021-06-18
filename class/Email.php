@@ -8,6 +8,7 @@
  *   
  */
 include("DBConnection.php");
+$confApp = include('../class/ConfigApp.php');
  class Email
  {
     private $_itemId;
@@ -201,6 +202,8 @@ include("DBConnection.php");
 		}
     }
 
+
+    /*
     public function createEmailTemplate() {
         try {
             $sql = 'INSERT into MondayGestionDiaria.EmailTemplate (type, title, content, created, modified, status) VALUES (:type, :title, :content, :created, :modified, :status)';
@@ -238,22 +241,44 @@ include("DBConnection.php");
 		}
     }
 
+    
+    public function getEmailData($type) {
+        //replace template var with value
+        $params = array(
+            'USER_NAME' => $userName
+            // 'USER_EMAIL'=> $userEmail,
+            //'CONTENT_TEST'=> $testing
+        );
+
+        $pattern = '[%s]';
+        foreach($params as $key=>$val){
+            // concatenate pattern & val (space between words)
+            $paramsPattern[sprintf($pattern,$key)] = $val;
+        }
+
+	    $this->setType($type);
+		$dataTemplate = $this->getEmailTemplate();
+
+        $emailContent = strtr($dataTemplate['content'], $paramsPattern);
+        $subject = strtr($dataTemplate['title'],$paramsPattern);
+
+        return [
+            'emailContent' => $emailContent,
+            'subject' => $subject
+        ];
+    }
+    */
 
     public function sendEmail($to, $cc, $headers, $arrayData, $subject, $message){
-        $dir = "/var/www/html/ApiMonday/report/files/";
         $fileName = md5(date('Y-m-d H:i:s:u')) . '.csv';
-
-        $fp = fopen($dir . $fileName .'', 'w');
-
-        //Add the headers
+        $fp = fopen($confApp['filesDir'] . $fileName .'', 'w');
         fputcsv($fp, $headers);
 
         foreach ($arrayData as $fields) {
             fputcsv($fp, $fields);
         }
         fclose($fp);
-        $urlFile = "http://3.211.203.97/ApiMonday/report/files/" . $fileName ."";
-        $url = 'http://204.93.172.87/soap/clienteMonday.php';
+        $urlFile = $confApp['urlFile'] . $fileName ."";
         $data = array('urlFile' => $urlFile, 
                     'fileName' => $fileName,
                     'to' => $to,
@@ -267,10 +292,8 @@ include("DBConnection.php");
             'content' => http_build_query($data)
         ));
         $context  = stream_context_create($options);
-        $result = file_get_contents($url, false, $context);
-        
+        $result = file_get_contents($confApp['clientEmail'], false, $context);
         return $result;
-        
     }
 
 

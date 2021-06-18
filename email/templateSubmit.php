@@ -1,10 +1,10 @@
 <?php
-include('../class/Email.php');
+include('../class/EmailTemplate.php');
 
 session_start();
 if(isset($_POST['submit'])){
     if(!empty($_POST['templateName']) && !empty($_POST['subject']) && !empty($_POST['content'])){
-        $emailTemplate = new Email();
+        $emailTemplate = new EmailTemplate();
         $emailTemplate->setType($_POST['templateName']);
         $emailTemplate->setTitle($_POST['subject']);
         $emailTemplate->setContent($_POST['content']);

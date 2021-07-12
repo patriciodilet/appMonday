@@ -25,7 +25,7 @@ switch($requestMethod) {
 		        $emailData = $emailTemplate->getEmailData($emailType, $params);
 
 		        $Email = new Email();
-		        $emailAviso = $Email->sendEmail($configApp['to'], $configApp['cc'], "", "", $emailData["subject"], $emailData["emailContent"]);
+		        $emailAviso = $Email->sendEmail($value['userEmail'], $configApp['cc'], "", "", $emailData["subject"], $emailData["emailContent"]);
 			}
         } else {
             $js_encode = json_encode(array('status'=>FALSE, 'message'=>'There is no record yet.'), true);

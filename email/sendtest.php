@@ -1,18 +1,35 @@
 <?php
 // include('../class/Email.php');  //
 include('../class/EmailTemplate.php');  // 
-include('../class/Control.php');
+// include('../class/Control.php');
 // include('../class/Monday.php');
 //$configApp = include('../class/ConfigApp.php');
 
 
-$emailTemplate = new EmailTemplate();
-$params = array(
-    'ITEM_URL' => "google.cl"
-);
-$emailType = "timeRunning";
-$emailData = $emailTemplate->getEmailData($emailType, $params);
-print_r($emailTemplate);
+    $id = 1;
+	$templateName = "test4";
+	$subject = "test4";
+	$content = "test4";
+
+    $emailTemplate = new EmailTemplate();
+    $emailTemplate->setId($id);
+    $emailTemplate->setType($templateName);
+    $emailTemplate->setTitle($subject);
+    $emailTemplate->setContent($content);
+    $emailTemplate->setCreated();
+    $emailTemplate->setModified();
+    $emailTemplate->setStatus();
+    $record = $emailTemplate->updateEmailTemplate();
+    echo $record;
+
+
+// $emailTemplate = new EmailTemplate();
+// $params = array(
+//     'ITEM_URL' => "google.cl"
+// );
+// $emailType = "timeRunning";
+// $emailData = $emailTemplate->getEmailData($emailType, $params);
+// print_r($emailTemplate);
 
 
 

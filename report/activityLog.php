@@ -237,7 +237,7 @@ switch($requestMethod) {
 			"updatedAt",
 			"isECL",
 			"link"];
-		$cantHorasExtras = count($activityList) - 1;
+		$cantHorasExtras = count($activityList);
 		
 		// email template configuration
         $emailTemplate = new EmailTemplate();

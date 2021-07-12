@@ -34,7 +34,6 @@ switch($requestMethod) {
 		  }
 		}
 		';
-		// $_queryGetIdByEmail = getMondayData($queryGetIdByEmail);
 		$monday = new Monday();
         $_queryGetIdByEmail = $monday->getMondayData($queryGetIdByEmail);
 			
@@ -146,12 +145,12 @@ switch($requestMethod) {
 
 						if($boolPeriod){
 							// Check period  of change
-							if(($dayFechRegistro >= 1) && ($dayFechRegistro <= 26) ){
+							if(($dayFechRegistro >= 1) && ($dayFechRegistro <= 19) ){
 								$monthStartedPeriod = date("m-Y", strtotime($fechaRegistro . "-1 months"));
 								$monthEndPeriod = date("m-Y", strtotime($fechaRegistro));
 							}
 
-							if(($dayFechRegistro >= 25) && ($dayFechRegistro <= 31)){
+							if(($dayFechRegistro >= 20) && ($dayFechRegistro <= 31)){
 								$monthStartedPeriod = date("m-Y", strtotime($fechaRegistro));
 								$monthEndPeriod  = date("m-Y", strtotime($fechaRegistro . "+1 months"));
 							} 				
@@ -234,6 +233,7 @@ switch($requestMethod) {
 			"date",
 			"startedAt",
 			"endedAt",
+			"HorasJornada",
 			"HorasExtras",
 			"entryHourOutPeriod",
 			"updatedAt",
@@ -251,7 +251,7 @@ switch($requestMethod) {
 		$emailData = $emailTemplate->getEmailData($emailType, $params);
       
 		$Email = new Email();
-		$res = $Email->sendEmail($configApp['to'], $configApp['cc'], $headers, $activityList, $emailData["subject"], $emailData["emailContent"]);
+		$res = $Email->sendEmail($configApp['to'], $configApp['cc'], $headers, $activityListECL, $emailData["subject"], $emailData["emailContent"]);
 		echo $res;
 
 		break;

@@ -63,6 +63,9 @@ switch($requestMethod) {
 					$maxTimeRunning = date('H:i:s', strtotime($configApp['maxTimeRunning']));
 				    if($currentTime > $maxTimeRunning){
 						$userEmail = null;
+						//print_r($aditionalValue);
+						//echo $aditionalValue;
+/*
 						foreach ($aditionalValue as $g_key => $g_value){
 							$startedUserId = $g_value['started_user_id'];
 							foreach ($_queryGetIdByEmail['data']['users'] as $z_key => $z_val) {
@@ -71,6 +74,8 @@ switch($requestMethod) {
 								}
 							}
 						}
+						*/
+
 						$itemUrl = "https://legaltec-desarrollo.monday.com/boards/1104694287/pulses/" . $itemId ."";//boardId base
  
 						$emailTemplate = new EmailTemplate();
@@ -82,8 +87,7 @@ switch($requestMethod) {
       
 		                $Email = new Email();
 		                $emailAviso = $Email->sendEmail($configApp['to'], $configApp['cc'], "", "", $emailData["subject"], $emailData["emailContent"]);
-		                echo $emailAviso;
-
+		                
 						$itemsRunning[] = array(
 							"boardId" => $boardId,
 							"itemId" => $itemId,

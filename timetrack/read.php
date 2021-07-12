@@ -14,7 +14,8 @@ switch($requestMethod) {
 		}
 		if(!empty($timetrackInfo)) {
 	      $js_encode = json_encode(array('status'=>TRUE, 'timetrackInfo'=>$timetrackInfo), true);
-        } else {
+        echo $timetrackInfo;
+		} else {
             $js_encode = json_encode(array('status'=>FALSE, 'message'=>'There is no record yet.'), true);
         }
 		header('Content-Type: application/json');

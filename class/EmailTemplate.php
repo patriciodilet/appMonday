@@ -10,12 +10,17 @@
 include_once ("DBConnection.php");
  class EmailTemplate
  {
+    private $_id;
     private $_type;
     private $_title;
     private $_content;
     private $_created;
     private $_modified;
     private $_status;
+
+    public function setId($id) {
+        $this->_id = $id;
+    }
 
     public function setType($type) {
         $this->_type = $type;
@@ -71,6 +76,52 @@ include_once ("DBConnection.php");
             die("There's an error in the query! " . $e);
         }
     
+    }
+
+    // update Timetrack
+    public function updateEmailTemplate() {
+        try {
+		    $sql = "UPDATE MondayGestionDiaria.EmailTemplate SET type=:type, title=:title, content=:content WHERE id=:id";
+		    $data = [
+                'type' => $this->_type,
+                'title' => $this->_title,
+                'content' => $this->_content,
+			    'id' => $this->_id
+			];
+			$stmt = $this->db->prepare($sql);
+			$stmt->execute($data);
+			$status = $stmt->rowCount();
+            return $status;
+		} catch (Exception $e) {
+			die("There's an error in the query!");
+		}
+    }
+
+    public function getEmailTemplateById() {
+    	try {
+    		$sql = "SELECT * FROM MondayGestionDiaria.EmailTemplate WHERE id = :id";
+		    $stmt = $this->db->prepare($sql);
+		    $data = [
+		    	'id' => $this->_id
+			];
+		    $stmt->execute($data);
+		    $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return $result;
+		} catch (Exception $e) {
+		    die("There's an error in the query!");
+		}
+    }
+
+    public function getEmailTemplateData() {
+    	try {
+    		$sql = "SELECT * FROM MondayGestionDiaria.EmailTemplate";
+		    $stmt = $this->db->prepare($sql);
+		    $stmt->execute();
+		    $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            return $result;
+		} catch (Exception $e) {
+		    die("There's an error in the query!");
+		}
     }
 
     public function getEmailTemplate() {

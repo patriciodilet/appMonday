@@ -63,7 +63,7 @@ switch($requestMethod) {
 					$maxTimeRunning = date('H:i:s', strtotime($configApp['maxTimeRunning']));
 				    if($currentTime > $maxTimeRunning){
 						$userEmail = null;
-						//print_r($aditionalValue);
+						print_r($aditionalValue);
 						//echo $aditionalValue;
 /*
 						foreach ($aditionalValue as $g_key => $g_value){

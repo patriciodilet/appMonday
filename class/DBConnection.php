@@ -6,10 +6,10 @@
 
 // Database Connection
 class DBConnection {
-    private $_dbHostname = "3.211.203.97";
-    private $_dbName = "MondayGestionDiaria";
-    private $_dbUsername = "legaltec";
-    private $_dbPassword = "wSHjV&nqD8";
+    private $_dbHostname = "";
+    private $_dbName = "";
+    private $_dbUsername = "";
+    private $_dbPassword = "";
     private $_con;
 
     public function __construct() {
